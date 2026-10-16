@@ -1,0 +1,6 @@
+allowBuilds:
+  core-js: false
+  unrs-resolver: true
+
+minimumReleaseAgeExclude:
+  - '@thunderid/*'
