@@ -2,34 +2,51 @@
 
 # ThunderID React Quickstart
 
-A minimal React + Vite application demonstrating ThunderID authentication with OAuth 2.0, PKCE, and JWT support using the `@thunderid/react` SDK.
+A React and Vite app that signs users in with the [ThunderID React SDK](https://www.npmjs.com/package/@thunderid/react) (`@thunderid/react`), using the authorization code flow with PKCE, and shows the signed-in user's profile and tokens.
 
 ## Prerequisites
 
-- Node.js 18+
-- A ThunderID application
+- Node.js 20 or later
+- A running ThunderID server (`https://localhost:8090` by default)
 
-## Setup
+## Get the sample
 
-1. Copy the environment template:
-   ```sh
+Download the latest zip from the [releases](https://github.com/thunder-id/samples/releases?q=sample%2Fquickstarts%2Freact&expanded=true), or copy the source:
+
+```bash
+npx degit thunder-id/samples/quickstarts/react my-app
+cd my-app
+```
+
+## Configure
+
+1. In the ThunderID Console, create a **React** application with `http://localhost:5173` as its redirect URL, and copy its client ID.
+
+2. Create your `.env`:
+
+   ```bash
    cp .env.example .env
    ```
 
-2. Fill in your ThunderID credentials in `.env`:
-   ```
-   VITE_THUNDERID_CLIENT_ID=<your-client-id>
-   VITE_THUNDERID_BASE_URL=https://your-thunderid-instance
-   ```
+   | Variable | Description |
+   |---|---|
+   | `VITE_THUNDERID_BASE_URL` | Base URL of your ThunderID server. |
+   | `VITE_THUNDERID_CLIENT_ID` | Client ID of the application. |
 
-3. Install dependencies and start the dev server:
-   ```sh
-   npm install
-   npm run dev
-   ```
+## Run
 
-The app will be available at `http://localhost:5173`.
+```bash
+npm install
+npm run dev
+```
 
-## Docs
+Open [http://localhost:5173](http://localhost:5173) and sign in.
 
-Full SDK reference: [thunderid.dev/docs](https://thunderid.dev/docs)
+## Learn more
+
+- [React quickstart guide](https://thunderid.dev/docs/getting-started/connect-your-application/react)
+- [React SDK reference](https://thunderid.dev/docs/sdks-and-tools/react/overview)
+
+## License
+
+Apache License 2.0. See [LICENSE](https://github.com/thunder-id/samples/blob/main/LICENSE).

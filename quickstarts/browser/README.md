@@ -2,36 +2,51 @@
 
 # ThunderID Browser Quickstart
 
-A minimal Vite + vanilla JS app demonstrating sign-in and sign-out with the ThunderID JavaScript SDK (`@thunderid/browser`).
+A framework-free JavaScript app, built with Vite, that signs users in and out with the [ThunderID Browser SDK](https://www.npmjs.com/package/@thunderid/browser) (`@thunderid/browser`).
 
 ## Prerequisites
 
-- Node.js 18+
-- A running ThunderID instance (default: `https://localhost:8090`)
-- A configured application with an authorized redirect URI set to your app's origin
+- Node.js 20 or later
+- A running ThunderID server (`https://localhost:8090` by default)
 
-## Getting started
+## Get the sample
 
-1. Copy the environment file and fill in your values:
-   ```sh
+Download the latest zip from the [releases](https://github.com/thunder-id/samples/releases?q=sample%2Fquickstarts%2Fbrowser&expanded=true), or copy the source:
+
+```bash
+npx degit thunder-id/samples/quickstarts/browser my-app
+cd my-app
+```
+
+## Configure
+
+1. In the ThunderID Console, create a **JavaScript** application with `http://localhost:5173` as its redirect URL, and copy its client ID.
+
+2. Create your `.env`:
+
+   ```bash
    cp .env.example .env
    ```
 
-2. Edit `.env` with your application's credentials:
-   ```
-   VITE_THUNDERID_CLIENT_ID=<your-client-id>
-   VITE_THUNDERID_BASE_URL=https://localhost:8090
-   ```
+   | Variable | Description |
+   |---|---|
+   | `VITE_THUNDERID_BASE_URL` | Base URL of your ThunderID server. |
+   | `VITE_THUNDERID_CLIENT_ID` | Client ID of the application. |
 
-3. Install dependencies and start the dev server:
-   ```sh
-   npm install
-   npm run dev
-   ```
+## Run
 
-Open [http://localhost:5173](http://localhost:5173) in your browser.
+```bash
+npm install
+npm run dev
+```
+
+Open [http://localhost:5173](http://localhost:5173) and sign in.
 
 ## Learn more
 
-- [ThunderID Docs](https://thunderid.dev/docs)
-- [`@thunderid/browser` SDK reference](https://thunderid.dev/docs/sdks/javascript/browser)
+- [Browser quickstart guide](https://thunderid.dev/docs/getting-started/connect-your-application/browser)
+- [Browser SDK reference](https://thunderid.dev/docs/sdks-and-tools/browser/overview)
+
+## License
+
+Apache License 2.0. See [LICENSE](https://github.com/thunder-id/samples/blob/main/LICENSE).

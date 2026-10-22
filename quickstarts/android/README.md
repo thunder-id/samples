@@ -2,65 +2,77 @@
 
 # ThunderID Android Quickstart
 
-ThunderID Android Quickstart demonstrates the full authentication lifecycle using the [ThunderID Android SDK](https://github.com/thunder-id/android-sdks) on Android.
+A Jetpack Compose app that signs users in with the [ThunderID Android SDK](https://github.com/thunder-id/android-sdks), using app-native authentication: sign-in and sign-up run inside the app through the Flow Execution API, with no browser redirect. It depends on the published SDK from [JitPack](https://jitpack.io/#thunder-id/android-sdks) (`com.github.thunder-id:android-sdks`).
 
-**Flow demonstrated:**
-1. App opens → unauthenticated state (sign-in screen)
-2. User initiates sign-in / sign-up → SDK starts app-native Flow Execution
-3. User completes the flow
-4. Sign-in → authenticated state with profile information, token debugging, and sign-out button.
-   Sign-up creates the account but does not start a session, so it returns to the landing screen
-   and the new credentials have to be used to sign in.
-5. User taps Sign Out → session terminated, returns to sign-in screen
+What the app does:
 
-The sample depends on the published SDK from [JitPack](https://jitpack.io/#thunder-id/android-sdks)
-(`com.github.thunder-id:android-sdks`), declared in `build.gradle.kts`.
+1. Opens signed out, on the sign-in screen.
+2. Starts sign-in or sign-up as an app-native flow, which the user completes in the app.
+3. After sign-in, shows the user's profile, token details for debugging, and a sign-out button. Sign-up creates the account without starting a session, so it returns to the landing screen to sign in with the new credentials.
+4. Signing out ends the session and returns to the sign-in screen.
 
 ## Prerequisites
 
 - JDK 17 or later
 - Android Studio, or the Android SDK with `ANDROID_HOME` set
-- An Android emulator or device (API 26+)
-- A running ThunderID instance
+- An Android emulator or device running API 26 or later
+- A running ThunderID server (`https://localhost:8090` by default)
 
-## Get the Sample
+## Get the sample
+
+Download the latest zip from the [releases](https://github.com/thunder-id/samples/releases?q=sample%2Fquickstarts%2Fandroid&expanded=true), or copy the source:
 
 ```bash
-git clone https://github.com/thunder-id/samples.git
-cd samples/quickstarts/android
-cp config.properties.example config.properties
+npx degit thunder-id/samples/quickstarts/android my-app
+cd my-app
 ```
 
 ## Configure
 
-This sample uses app-native authentication (Flow Execution API), so only the base URL and application ID are required, no OAuth2 client ID or redirect URIs.
+1. In the ThunderID Console, create an **Android** application and copy its application ID. App-native authentication needs no OAuth2 client ID or redirect URL.
 
-| Variable | Description |
-|----------|-------------|
-| `THUNDERID_BASE_URL` | Base URL of your ThunderID server (HTTPS) |
-| `THUNDERID_APPLICATION_ID` | Application UUID from the ThunderID Console |
-| `THUNDERID_ATTESTATION_ENABLED` | `true` to send a Google Play Integrity token with each flow (optional) |
-| `THUNDERID_CLOUD_PROJECT_NUMBER` | Google Cloud project number used for Play Integrity (optional) |
+2. Create your `config.properties`:
 
-`config.properties` is gitignored. Never commit real credentials. Each value can also be supplied as an environment variable of the same name.
+   ```bash
+   cp config.properties.example config.properties
+   ```
 
-If your ThunderID server runs on `localhost`, don't use `localhost` in `THUNDERID_BASE_URL` directly:
+   | Variable | Description |
+   |---|---|
+   | `THUNDERID_BASE_URL` | Base URL of your ThunderID server (HTTPS). |
+   | `THUNDERID_APPLICATION_ID` | Application ID of the application. |
+   | `THUNDERID_ATTESTATION_ENABLED` | Optional. `true` sends a Google Play Integrity token with each flow. |
+   | `THUNDERID_CLOUD_PROJECT_NUMBER` | Optional. Google Cloud project number used for Play Integrity. |
 
-- **Emulator**: use `https://10.0.2.2:8090`, the emulator's alias for your host machine's loopback.
-- **Physical device**: run `adb reverse tcp:8090 tcp:8090` and keep using `https://localhost:8090`, or point the URL at your host machine's LAN IP.
+   `config.properties` is gitignored. Each value can also be set as an environment variable of the same name.
+
+   A ThunderID server on your machine is not at `localhost` from the device's point of view:
+
+   - **Emulator**: use `https://10.0.2.2:8090`, the emulator's alias for your machine. This is the default in the example file.
+   - **Physical device**: run `adb reverse tcp:8090 tcp:8090` and use `https://localhost:8090`, or use your machine's LAN IP.
 
 ## Run
 
-Open this directory in Android Studio, sync Gradle, and run it on an emulator or device. From the command line:
+Open the project in Android Studio, sync Gradle, and run it on an emulator or device. From the command line:
 
 ```bash
 ./gradlew installDebug
 ```
 
-## Attestation and Passkeys
+## Where things are
 
-See [Try the Android Sample App](https://thunderid.dev/docs/v1.0.x/sdks/android/guides/try-the-sample-app) in the Android SDK docs for Google Play Integrity attestation and passkey (Digital Asset Links, `assetlinks.json.example`) setup.
+| Path | What it is |
+|---|---|
+| `config.properties.example` | The configuration template |
+| `assetlinks.json.example` | Digital Asset Links template for passkeys |
+| `thunderid-config/thunderid-config.yaml` | The application the [Android SDK end-to-end suite](https://github.com/thunder-id/android-sdks/tree/main/tests/e2e) provisions on a test server. The suite fetches this sample and builds it against the SDK checkout under test. |
 
-## End-to-End Tests
+## Learn more
 
-`thunderid-config/thunderid-config.yaml` declares the application the Android SDK's [E2E suite](https://github.com/thunder-id/android-sdks/tree/main/tests/e2e) provisions on a test server. The suite fetches this sample and builds it against the SDK checkout under test.
+- [Android quickstart guide](https://thunderid.dev/docs/getting-started/connect-your-application/android)
+- [Try the Android sample app](https://thunderid.dev/docs/sdks-and-tools/android/guides/try-the-sample-app), including Google Play Integrity attestation and passkey setup
+- [Android SDK reference](https://thunderid.dev/docs/sdks-and-tools/android/overview)
+
+## License
+
+Apache License 2.0. See [LICENSE](https://github.com/thunder-id/samples/blob/main/LICENSE).

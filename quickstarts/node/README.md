@@ -1,79 +1,71 @@
 ![ThunderID Node.js Quickstart](https://raw.githubusercontent.com/thunder-id/samples/main/.github/assets/banners/quickstarts-node.png)
 
-# ThunderID Node.js Service Quickstart
+# ThunderID Node.js Quickstart
 
-A minimal machine-to-machine (service-to-service) client, using the ThunderID Node.js SDK
-(`@thunderid/node`). Unlike the other quickstarts, there's no user and no browser sign-in: this
-service authenticates as **itself** with the OAuth 2.0 `client_credentials` grant, then uses the
-resulting access token to call another piece of business logic.
+A machine-to-machine client built with the [ThunderID Node.js SDK](https://www.npmjs.com/package/@thunderid/node) (`@thunderid/node`). There is no user and no browser sign-in: the service authenticates as itself with the OAuth 2.0 `client_credentials` grant, then uses the access token to call another piece of business logic. Use this pattern for background jobs, scheduled tasks, or one backend service calling another.
 
-This is the pattern to use for background jobs, cron tasks, or one backend service calling
-another, where there's no human in the loop to redirect through a login page.
+## Prerequisites
 
-The sample is organized the way a real backend usually is, with authentication kept in its own
-service instead of scattered across business logic:
+- Node.js 20 or later
+- A running ThunderID server (`https://localhost:8090` by default)
+
+## Get the sample
+
+Download the latest zip from the [releases](https://github.com/thunder-id/samples/releases?q=sample%2Fquickstarts%2Fnode&expanded=true), or copy the source:
+
+```bash
+npx degit thunder-id/samples/quickstarts/node my-app
+cd my-app
+```
+
+## Configure
+
+1. In the ThunderID Console (`https://localhost:8090/console`), go to **Applications**, click **Add Application**, and select **Backend Service**. Give it a name, such as `node-service-quickstart`, and create it. Backend Service applications come set up for the `client_credentials` grant with `client_secret_basic` authentication.
+2. Copy the **Client ID** from the **General** tab, and the **Client Secret** from the dialog shown when the application is created. The secret is shown only once.
+3. Create your `.env`:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   | Variable | Description |
+   |---|---|
+   | `THUNDERID_BASE_URL` | Base URL of your ThunderID server. |
+   | `THUNDERID_CLIENT_ID` | Client ID of the application. |
+   | `THUNDERID_CLIENT_SECRET` | Client secret of the application. |
+   | `THUNDERID_SCOPE` | Optional. Space-separated scopes to request. |
+   | `NODE_TLS_REJECT_UNAUTHORIZED` | Set to `0` in the example to accept a local server's self-signed certificate. Local development only. |
+
+## Run
+
+```bash
+npm install
+npm start
+```
+
+The script authenticates once, calls `InventoryService.getStock()` for a few SKUs, prints the result, and exits: a scope line, then an `Inventory` panel with one line per SKU, green for items in stock, yellow for items out of stock, and red for a SKU that does not exist.
+
+## How it works
+
+Authentication lives in its own service instead of being spread across the business logic:
 
 ```text
-quickstarts/node/
 ├── index.mjs                 Wires the services together and prints the result
 └── lib/
-    ├── AuthService.mjs        Acquires and caches this service's own access token
+    ├── AuthService.mjs        Gets and caches this service's own access token
     ├── InventoryService.mjs   Business logic; asks AuthService for a token before answering
     └── ui.mjs                 Terminal output, built on boxen and picocolors
 ```
 
-## How it works
-
-- `lib/AuthService.mjs` initializes `ThunderIDNodeClient` with `grantType: 'client_credentials'`.
-  With that set, `getAccessToken()` authenticates as the service itself (no session, no sign-in)
-  and transparently fetches, caches, and refreshes the token, the same method a user-facing
-  quickstart would call to read an existing session's token, just authenticating as the service
-  itself instead of a signed-in user.
-- `lib/InventoryService.mjs` is the business logic that needs a token before it can act. It asks
-  `AuthService` for one; the rest of the app never handles a token or an `Authorization` header
-  directly. In a real deployment, `InventoryService` would send that token to a separate inventory
-  backend over HTTP, in place of another service calling `AuthService`'s owner the same way.
-
-## Prerequisites
-
-- Node.js 18+
-- A running ThunderID instance (default: `https://localhost:8090`)
-- A **Backend Service** application registered in ThunderID
-
-## Create an application
-
-1. Open the ThunderID Console (`https://localhost:8090/console`), navigate to **Applications**, and
-   click **Add Application**.
-2. From the **Choose a type** page, select **Backend Service**.
-3. Enter a name (e.g. `node-service-quickstart`) and create the application. Backend Service apps
-   are pre-configured for the `client_credentials` grant with `client_secret_basic` authentication,
-   no extra setup needed.
-4. Copy the **Client ID** from the **General** tab, and the **Client Secret** from the window that
-   pops up when the application is created (shown only once), you'll need them below.
-
-## Getting started
-
-1. Copy the environment file and fill in your application's credentials:
-   ```sh
-   cp .env.example .env
-   ```
-   ```
-   THUNDERID_CLIENT_ID=<your client ID>
-   THUNDERID_CLIENT_SECRET=<your client secret>
-   THUNDERID_BASE_URL=https://localhost:8090
-   ```
-
-2. Install dependencies and run it:
-   ```sh
-   npm install
-   npm start
-   ```
-
-The script authenticates once, then calls `InventoryService.getStock()` for a few SKUs and prints
-the result before exiting: a scope line, then an `Inventory` panel with one line per SKU, green
-for in-stock items, yellow for out-of-stock, red for a SKU that doesn't exist.
+- `lib/AuthService.mjs` creates a `ThunderIDNodeClient` with `grantType: 'client_credentials'`. With that set, `getAccessToken()` authenticates as the service itself and fetches, caches, and refreshes the token. It is the same method a user-facing app calls to read a session's token.
+- `lib/InventoryService.mjs` needs a token before it can act and asks `AuthService` for one. The rest of the app never handles a token or an `Authorization` header. In a real deployment, `InventoryService` would send the token to a separate inventory backend over HTTP.
 
 ## Learn more
 
-- [ThunderID Docs](https://thunderid.dev/docs)
-- [OAuth 2.0 Client Credentials Grant (RFC 6749 §4.4)](https://www.rfc-editor.org/rfc/rfc6749#section-4.4)
+- [Node.js quickstart guide](https://thunderid.dev/docs/getting-started/connect-your-application/node)
+- [Node.js SDK reference](https://thunderid.dev/docs/sdks-and-tools/node/overview)
+- [OAuth 2.0 client credentials grant (RFC 6749, section 4.4)](https://www.rfc-editor.org/rfc/rfc6749#section-4.4)
+
+## License
+
+Apache License 2.0. See [LICENSE](https://github.com/thunder-id/samples/blob/main/LICENSE).
