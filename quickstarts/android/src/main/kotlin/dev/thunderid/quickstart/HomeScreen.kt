@@ -56,10 +56,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.thunderid.android.R
 import dev.thunderid.compose.LocalThunderID
-import dev.thunderid.compose.components.actions.SignOutButton
-import dev.thunderid.compose.components.presentation.user.ChangeCredential
-import dev.thunderid.compose.components.presentation.user.UserAvatar
-import dev.thunderid.compose.components.presentation.user.UserProfile
+import dev.thunderid.compose.components.account.ChangeCredential
+import dev.thunderid.compose.components.account.UserAvatar
+import dev.thunderid.compose.components.account.UserProfile
+import dev.thunderid.compose.components.auth.buttons.SignOutButton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext

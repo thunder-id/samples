@@ -52,7 +52,7 @@ android {
 }
 
 dependencies {
-    implementation("com.github.thunder-id:android-sdks:v1.4.0")
+    implementation("com.github.thunder-id:android-sdks:v1.6.0")
     implementation("com.google.android.play:integrity:1.6.0")
 
     val composeBom = platform("androidx.compose:compose-bom:2024.02.00")

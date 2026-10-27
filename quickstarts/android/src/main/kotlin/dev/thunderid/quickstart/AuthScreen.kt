@@ -45,8 +45,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import dev.thunderid.compose.components.presentation.auth.SignIn
-import dev.thunderid.compose.components.presentation.auth.SignUp
+import dev.thunderid.compose.components.auth.SignIn
+import dev.thunderid.compose.components.auth.SignUp
 
 private val PrimaryBlue = Color(0xFF3688FF)
 private val BgLight = Color(0xFFF7F9FC)
