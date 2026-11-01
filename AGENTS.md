@@ -11,6 +11,7 @@ Samples live at `<area>/<sample>`:
 |---|---|
 | `quickstarts` | The minimal app per platform that the ThunderID docs quickstarts walk through |
 | `integrations` | ThunderID used through a third-party library, such as Better Auth or flutter_appauth |
+| `patterns` | An architecture that spans more than one app, such as a React app with an Express BFF |
 | `self-care` | Apps built on ThunderID's self-service features |
 | `b2b` | Apps where an administrator manages an organization's ThunderID resources |
 
@@ -42,7 +43,9 @@ on a pull request.
   `workflow_dispatch` allows at most 25 inputs. Count them before adding one.
 - Keep its manifest (`package.json`, `pubspec.yaml`, `settings.gradle.kts`, or
   `Package.swift`) at the sample root. The pull request builder finds samples by that file
-  at exactly `<area>/<sample>/`.
+  at exactly `<area>/<sample>/`. A sample made of several apps, such as a `patterns` sample
+  with `client/` and `server/`, keeps a root `package.json` that lists them as npm workspaces,
+  with one `package-lock.json` beside it, so CI installs, lints, and builds them together.
 
 ## Sample README structure
 
