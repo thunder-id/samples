@@ -1,10 +1,10 @@
 ![ThunderID Account Sample](https://raw.githubusercontent.com/thunder-id/samples/main/.github/assets/banners/self-care-account.png)
 
-# ThunderID Account
+# ThunderID Account Sample
 
-ThunderID Account is where users manage their own ThunderID account. Signed-in users can view and edit their profile and
-change their password. It is a React (Vite + TypeScript) app built with the self-care components of the
-[ThunderID React SDK](https://www.npmjs.com/package/@thunderid/react).
+A React (Vite and TypeScript) app where signed-in users manage their own ThunderID account: view and edit their profile,
+and change their password. It is built with the self-care components of the
+[ThunderID React SDK](https://www.npmjs.com/package/@thunderid/react) (`@thunderid/react`).
 
 | Account page tab | SDK component      |
 | ---------------- | ------------------ |
@@ -12,55 +12,59 @@ change their password. It is a React (Vite + TypeScript) app built with the self
 | Personal info    | `UserProfile`      |
 | Security         | `ChangeCredential` |
 
-The top nav uses `SignInButton`, `UserDropdown` and `SignedIn`/`SignedOut`.
+The top bar uses `SignInButton`, `UserDropdown`, `SignedIn`, and `SignedOut`.
 
 ## Prerequisites
 
-- Node.js 20+ and npm
-- A running ThunderID server (defaults to `https://localhost:8090`)
+- Node.js 20 or later
+- A running ThunderID server (`https://localhost:8090` by default)
 
-New to ThunderID with React? Follow the
-[React quickstart guide](https://thunderid.dev/docs/next/getting-started/connect-your-application/react/) to set up a
-ThunderID server and connect a React app to it.
+## Get the sample
 
-## Setup
+Download the latest zip from the
+[releases](https://github.com/thunder-id/samples/releases?q=sample%2Fself-care%2Faccount&expanded=true), or copy the
+source:
 
-1. In the ThunderID Console,
-   [create a React application](https://thunderid.dev/docs/getting-started/connect-your-application/react/#:~:text=2-,Create%20an%20Application,-Sign%20in%20to)
-   using the React quickstart guide. Use `http://localhost:5173` as the app's redirect URL, and copy the client ID it
-   gives you.
+```bash
+npx degit thunder-id/samples/self-care/account my-app
+cd my-app
+```
 
-2. Configure the app:
+## Configure
+
+1. In the ThunderID Console, create a **React** application with `http://localhost:5173` as its redirect URL, and copy
+   its client ID.
+
+2. Create your `.env`:
 
    ```bash
    cp .env.example .env
    ```
 
-   | Variable                   | Description                                 |
-   | -------------------------- | ------------------------------------------- |
-   | `VITE_THUNDERID_BASE_URL`  | Base URL of your ThunderID server.          |
-   | `VITE_THUNDERID_CLIENT_ID` | Client ID of the application (from step 1). |
+   | Variable                   | Description                        |
+   | -------------------------- | ---------------------------------- |
+   | `VITE_THUNDERID_BASE_URL`  | Base URL of your ThunderID server. |
+   | `VITE_THUNDERID_CLIENT_ID` | Client ID of the application.      |
 
-3. Install and start:
+## Run
 
-   ```bash
-   npm install
-   npm run dev
-   ```
+```bash
+npm install
+npm run dev
+```
 
-4. Open `http://localhost:5173` and sign in. You land on the account page.
+Open [http://localhost:5173](http://localhost:5173) and sign in. You land on the account page.
 
-## Adding new self-care components
+## Add a self-care component
 
 When the SDK ships a new self-care component, bump `@thunderid/react` in `package.json` and add the component to
-`src/pages/AccountPage.tsx`:
+`src/pages/AccountPage.tsx`. For a new area, add a tab to `TABS` and `TILES`, and render the component for that tab.
 
-- A new area (for example, Security): add a tab to `TABS` and `TILES`, and render the component for that tab.
+## Learn more
 
-## Docs
-
-- Full SDK reference: [thunderid.dev/docs](https://thunderid.dev/docs)
+- [React quickstart guide](https://thunderid.dev/docs/getting-started/connect-your-application/react)
+- [React SDK reference](https://thunderid.dev/docs/sdks-and-tools/react/overview)
 
 ## License
 
-Apache License 2.0.
+Apache License 2.0. See [LICENSE](https://github.com/thunder-id/samples/blob/main/LICENSE).

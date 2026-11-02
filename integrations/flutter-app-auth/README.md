@@ -2,28 +2,37 @@
 
 # ThunderID Flutter AppAuth Sample
 
-A minimal Flutter app that signs users in to ThunderID with [flutter_appauth](https://pub.dev/packages/flutter_appauth), a third-party OpenID Connect plugin that wraps AppAuth for iOS and Android. It uses the authorization code flow with PKCE in the system browser, refreshes tokens, and signs out through ThunderID's end session endpoint.
-
-The full walkthrough is the [Flutter AppAuth guide](https://thunderid.dev/sdks-and-tools/flutter-appauth) in the ThunderID docs.
+A Flutter app that signs users in to ThunderID with [flutter_appauth](https://pub.dev/packages/flutter_appauth), a third-party OpenID Connect plugin that wraps AppAuth for iOS and Android. It uses the authorization code flow with PKCE in the system browser, refreshes tokens, and signs out through ThunderID's end session endpoint.
 
 ## Prerequisites
 
 - Flutter 3.38.1 or later
-- An Android emulator (API 24+) or an iOS Simulator (iOS 13+)
-- A running ThunderID instance (default: `https://localhost:8090`)
+- An Android emulator running API 24 or later, or an iOS simulator running iOS 13 or later
+- A running ThunderID server (`https://localhost:8090` by default)
 
-## Configure ThunderID
+## Get the sample
 
-1. In the Console, go to **Applications**, click **Add Application**, and choose **Flutter**.
+Download the latest zip from the [releases](https://github.com/thunder-id/samples/releases?q=sample%2Fintegrations%2Fflutter-app-auth&expanded=true), or copy the source:
+
+```bash
+npx degit thunder-id/samples/integrations/flutter-app-auth my-app
+cd my-app
+```
+
+## Configure
+
+1. In the ThunderID Console, go to **Applications**, click **Add Application**, and choose **Flutter**.
 2. Under **Sign-In Approach**, choose **Redirect to ThunderID Gate**.
 3. Under **Deep Link / Universal Link**, enter `com.example.appauth://callback`.
 4. Create the application and copy its **Client ID**.
 5. On the **Advanced** tab, add `com.example.appauth://logout` under **Post-Logout Redirect URIs**.
 6. On the **Token** tab, open **User**, then **ID Token**, and add the attributes the app should see, such as `email` and `name`.
 
-## Trust the Local Certificate
+The app takes its configuration at run time, as shown under [Run](#run).
 
-A local ThunderID instance serves a self-signed certificate from `<THUNDERID_HOME>/config/certs/server.cert`. The device must trust it before the browser or AppAuth can reach the server.
+### Trust the local certificate
+
+A local ThunderID server serves a self-signed certificate from `<THUNDERID_HOME>/config/certs/server.cert`. The device must trust it before the browser or AppAuth can reach the server.
 
 **Android emulator**
 
@@ -34,7 +43,7 @@ adb push <THUNDERID_HOME>/config/certs/server.cert /sdcard/Download/thunderid-de
 
 Then install it on the emulator under **Settings > Security & privacy > More security & privacy > Encryption & credentials > Install a certificate > CA certificate**, and pick `thunderid-dev.crt` from **Downloads**. Older Android versions list **Encryption & credentials** directly under **Settings > Security**. Debug builds of this sample trust user-installed certificates through `android/app/src/debug/res/xml/network_security_config.xml`; release builds do not.
 
-**iOS Simulator**
+**iOS simulator**
 
 ```bash
 xcrun simctl keychain booted add-root-cert <THUNDERID_HOME>/config/certs/server.cert
@@ -47,12 +56,12 @@ flutter pub get
 flutter run --dart-define=THUNDERID_CLIENT_ID=<your-client-id>
 ```
 
-For an instance that is not at `https://localhost:8090`, also pass `--dart-define=THUNDERID_ISSUER=<issuer-url>`.
+For a server that is not at `https://localhost:8090`, also pass `--dart-define=THUNDERID_ISSUER=<issuer-url>`.
 
-## Where Things Are
+## Where things are
 
-| File | What it does |
-|------|--------------|
+| Path | What it is |
+|---|---|
 | `lib/auth_config.dart` | Issuer, client ID, redirect URIs, and scopes |
 | `lib/auth_service.dart` | Sign-in, refresh, session restore, and sign-out with flutter_appauth |
 | `lib/main.dart` | A single screen that drives the service |
@@ -60,4 +69,13 @@ For an instance that is not at `https://localhost:8090`, also pass `--dart-defin
 | `android/app/src/main/AndroidManifest.xml` | `MainActivity` without the `android:taskAffinity=""` that `flutter create` adds, which would stop the redirect from completing sign-in |
 | `ios/Runner/Info.plist` | Registers the same scheme under `CFBundleURLTypes` |
 
-To use your own scheme, change it in all three of `auth_config.dart`, `build.gradle.kts`, and `Info.plist`, keep it lowercase, and register the new URIs on the ThunderID application.
+To use your own scheme, change it in `auth_config.dart`, `build.gradle.kts`, and `Info.plist`, keep it lowercase, and register the new URIs on the ThunderID application.
+
+## Learn more
+
+- [Flutter AppAuth guide](https://thunderid.dev/sdks-and-tools/flutter-appauth), which walks through every step this sample runs
+- [flutter_appauth](https://pub.dev/packages/flutter_appauth)
+
+## License
+
+Apache License 2.0. See [LICENSE](https://github.com/thunder-id/samples/blob/main/LICENSE).

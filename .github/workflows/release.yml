@@ -104,6 +104,12 @@ on:
         type: boolean
         default: false
 
+      sample_b2b_manage:
+        description: 'b2b/manage'
+        required: false
+        type: boolean
+        default: false
+
 permissions:
   contents: write
 
@@ -141,6 +147,7 @@ jobs:
           sample_better_auth_nextjs: ${{ github.event.inputs.sample_better_auth_nextjs }}
           sample_flutter_app_auth: ${{ github.event.inputs.sample_flutter_app_auth }}
           sample_self_care_account: ${{ github.event.inputs.sample_self_care_account }}
+          sample_b2b_manage: ${{ github.event.inputs.sample_b2b_manage }}
         run: |
           samples='[]'
           add() {
@@ -161,6 +168,7 @@ jobs:
           add sample_better_auth_nextjs '{"path":"integrations/better-auth-nextjs","emoji":"🔐","title":"ThunderID Better Auth Next.js Sample"}'
           add sample_flutter_app_auth '{"path":"integrations/flutter-app-auth","emoji":"🦋","title":"ThunderID Flutter AppAuth Sample"}'
           add sample_self_care_account '{"path":"self-care/account","emoji":"👤","title":"ThunderID Self-Care Account Sample"}'
+          add sample_b2b_manage '{"path":"b2b/manage","emoji":"🏢","title":"ThunderID B2B Manage Sample"}'
           if [ "$samples" = "[]" ]; then
             echo "❌ No sample selected. Check at least one sample_* input."
             exit 1

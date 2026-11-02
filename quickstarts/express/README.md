@@ -2,68 +2,67 @@
 
 # ThunderID Express Quickstart
 
-A minimal Express.js **API** protected by ThunderID access tokens, using the ThunderID JavaScript
-SDK (`@thunderid/express`). Unlike the browser-focused quickstarts, this sample doesn't have a
-sign-in button — it's a resource server. Open [http://localhost:3000](http://localhost:3000) and
-you'll get API documentation (endpoints, curl examples, a downloadable Postman collection) instead
-of a login screen.
+An Express API protected by ThunderID access tokens, using the [ThunderID Express SDK](https://www.npmjs.com/package/@thunderid/express) (`@thunderid/express`). It is a resource server, so there is no sign-in button: [http://localhost:3000](http://localhost:3000) serves API documentation with endpoints, curl examples, and a downloadable Postman collection.
 
-Protected routes validate the `Authorization: Bearer <token>` header against ThunderID's OIDC
-`/oauth2/userinfo` endpoint — the same check any OAuth 2.0 resource server performs. A `/login` →
-`/token` helper is included purely so you have a fast way to mint a demo access token to test with.
+Protected routes check the `Authorization: Bearer <token>` header against ThunderID's OIDC `/oauth2/userinfo` endpoint, the same check any OAuth 2.0 resource server performs. A `/login` and `/token` helper is included only to give you a quick way to get a demo access token.
 
 ## Prerequisites
 
-- Node.js 18+
-- A running ThunderID instance (default: `https://localhost:8090`)
-- A configured application with `http://localhost:3000/login` added as an authorized redirect URI
+- Node.js 20 or later
+- A running ThunderID server (`https://localhost:8090` by default)
 
-## Getting started
+## Get the sample
 
-1. Copy the environment file and fill in your values:
-   ```sh
+Download the latest zip from the [releases](https://github.com/thunder-id/samples/releases?q=sample%2Fquickstarts%2Fexpress&expanded=true), or copy the source:
+
+```bash
+npx degit thunder-id/samples/quickstarts/express my-app
+cd my-app
+```
+
+## Configure
+
+1. In the ThunderID Console, create an **Express** application with `http://localhost:3000/login` as its redirect URL, and copy its client ID and client secret.
+
+2. Create your `.env`:
+
+   ```bash
    cp .env.example .env
    ```
 
-2. Edit `.env` with your application's credentials:
-   ```
-   THUNDERID_CLIENT_ID=<your-client-id>
-   THUNDERID_CLIENT_SECRET=<your-client-secret>
-   THUNDERID_BASE_URL=https://localhost:8090
-   ```
+   | Variable | Description |
+   |---|---|
+   | `THUNDERID_BASE_URL` | Base URL of your ThunderID server. |
+   | `THUNDERID_CLIENT_ID` | Client ID of the application. |
+   | `THUNDERID_CLIENT_SECRET` | Client secret of the application. Server-only. |
+   | `NODE_TLS_REJECT_UNAUTHORIZED` | Set to `0` in the example to accept a local server's self-signed certificate. Local development only. |
 
-3. Install dependencies and start the server:
-   ```sh
-   npm install
-   npm start
-   ```
+## Run
 
-Open [http://localhost:3000](http://localhost:3000) for the API documentation page.
+```bash
+npm install
+npm start
+```
 
-## Trying the API
+Open [http://localhost:3000](http://localhost:3000) for the API documentation.
 
-- `GET /api/public` — no auth required.
-- `GET /api/protected`, `GET /api/me`, and `PATCH /api/me/credentials` — require `Authorization: Bearer <access_token>`.
+## Try the API
 
-To get a token to test with, open [http://localhost:3000/login](http://localhost:3000/login),
-sign in once, and your access token (decoded claims included) will be shown at
-[http://localhost:3000/token](http://localhost:3000/token). Then:
+- `GET /api/public` needs no token.
+- `GET /api/protected`, `GET /api/me`, and `PATCH /api/me/credentials` need `Authorization: Bearer <access_token>`.
 
-```sh
+To get a token, open [http://localhost:3000/login](http://localhost:3000/login) and sign in. The access token and its decoded claims are shown at [http://localhost:3000/token](http://localhost:3000/token). Then:
+
+```bash
 curl http://localhost:3000/api/me \
   -H "Authorization: Bearer $ACCESS_TOKEN"
 ```
 
-Prefer a GUI? Download the Postman collection from the API docs page (or directly at
-`/postman-collection.json`), paste your token into the `accessToken` collection variable, and run
-the requests from there.
+To use Postman instead, download the collection from the API documentation page (or `/postman-collection.json`), paste your token into the `accessToken` collection variable, and send the requests.
 
 ## Back-channel logout
 
-The demo session behind `/login` and `/token` can be ended by ThunderID itself. When the user's
-ThunderID session ends somewhere else, for example by signing out of another application,
-ThunderID posts a logout token to this app, and the SDK ends the local session. The route is one
-line in `index.mjs`:
+ThunderID can end the demo session behind `/login` and `/token` itself. When the user's ThunderID session ends somewhere else, for example by signing out of another application, ThunderID posts a logout token to this app and the SDK ends the local session. The route is one line in `index.mjs`:
 
 ```js
 app.post('/backchannel-logout', handleBackchannelLogout());
@@ -71,29 +70,28 @@ app.post('/backchannel-logout', handleBackchannelLogout());
 
 To try it:
 
-1. In the ThunderID Console, open this application, go to **Advanced Settings → OAuth2
-   Configuration**, and set **Back-Channel Logout URI** to
-   `http://localhost:3000/backchannel-logout`.
-2. ThunderID refuses localhost and private network addresses by default. For local testing only,
-   turn that off in the server's `deployment.yaml` and restart it:
+1. In the ThunderID Console, open this application, go to **Advanced Settings → OAuth2 Configuration**, and set **Back-Channel Logout URI** to `http://localhost:3000/backchannel-logout`.
+2. ThunderID refuses localhost and private network addresses by default. For local testing only, turn that off in the server's `deployment.yaml` and restart it:
+
    ```yaml
    oauth:
      logout:
        backchannel:
          reject_private_addresses: false
    ```
-3. Sign in at [http://localhost:3000/login](http://localhost:3000/login), then sign in to a second
-   application in the same browser, so both share one ThunderID session.
-4. Sign out of the second application. Open [http://localhost:3000/token](http://localhost:3000/token):
-   you are sent back to sign-in, because this app's session was ended too.
 
-The Bearer-token API routes (`/api/*`) are not affected: they check each access token with
-ThunderID on every request and hold no session.
+3. Sign in at [http://localhost:3000/login](http://localhost:3000/login), then sign in to a second application in the same browser, so both share one ThunderID session.
+4. Sign out of the second application, then open [http://localhost:3000/token](http://localhost:3000/token). You are sent back to sign in, because this app's session ended too.
 
-The SDK keeps sessions in memory by default. If you run more than one instance of an app, give the
-SDK a shared store, since ThunderID's request reaches only one of them.
+The Bearer token routes under `/api` are not affected: they check each access token with ThunderID on every request and hold no session.
+
+The SDK keeps sessions in memory by default. If you run more than one instance, give the SDK a shared store, since ThunderID's request reaches only one of them.
 
 ## Learn more
 
-- [ThunderID Docs](https://thunderid.dev/docs)
-- [`@thunderid/express` SDK reference](https://thunderid.dev/docs/sdks/javascript/express)
+- [Express quickstart guide](https://thunderid.dev/docs/getting-started/connect-your-application/express)
+- [Express SDK reference](https://thunderid.dev/docs/sdks-and-tools/express/overview)
+
+## License
+
+Apache License 2.0. See [LICENSE](https://github.com/thunder-id/samples/blob/main/LICENSE).
