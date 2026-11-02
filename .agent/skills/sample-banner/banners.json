@@ -118,6 +118,15 @@
       "desc": "Sign in to a Flutter app with the flutter_appauth plugin, using authorization code and PKCE."
     },
     {
+      "path": "patterns/react-express-bff",
+      "alt": "ThunderID React Express BFF Sample",
+      "badge": "PATTERN",
+      "logo": "react",
+      "title": "React <accent>+ Express BFF</accent>",
+      "accent": "#61DAFB",
+      "desc": "A React app that signs in through an Express BFF, which keeps tokens on the server with @thunderid/express and handles back-channel logout."
+    },
+    {
       "path": "self-care/account",
       "alt": "ThunderID Account Sample",
       "badge": "SELF-CARE SAMPLE",

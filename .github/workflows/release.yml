@@ -98,6 +98,12 @@ on:
         type: boolean
         default: false
 
+      sample_patterns_react_express_bff:
+        description: 'patterns/react-express-bff'
+        required: false
+        type: boolean
+        default: false
+
       sample_self_care_account:
         description: 'self-care/account'
         required: false
@@ -146,6 +152,7 @@ jobs:
           sample_quickstarts_vue: ${{ github.event.inputs.sample_quickstarts_vue }}
           sample_better_auth_nextjs: ${{ github.event.inputs.sample_better_auth_nextjs }}
           sample_flutter_app_auth: ${{ github.event.inputs.sample_flutter_app_auth }}
+          sample_patterns_react_express_bff: ${{ github.event.inputs.sample_patterns_react_express_bff }}
           sample_self_care_account: ${{ github.event.inputs.sample_self_care_account }}
           sample_b2b_manage: ${{ github.event.inputs.sample_b2b_manage }}
         run: |
@@ -167,6 +174,7 @@ jobs:
           add sample_quickstarts_vue '{"path":"quickstarts/vue","emoji":"🟩","title":"ThunderID Vue Quickstart Sample"}'
           add sample_better_auth_nextjs '{"path":"integrations/better-auth-nextjs","emoji":"🔐","title":"ThunderID Better Auth Next.js Sample"}'
           add sample_flutter_app_auth '{"path":"integrations/flutter-app-auth","emoji":"🦋","title":"ThunderID Flutter AppAuth Sample"}'
+          add sample_patterns_react_express_bff '{"path":"patterns/react-express-bff","emoji":"🛡️","title":"ThunderID React Express BFF Sample"}'
           add sample_self_care_account '{"path":"self-care/account","emoji":"👤","title":"ThunderID Self-Care Account Sample"}'
           add sample_b2b_manage '{"path":"b2b/manage","emoji":"🏢","title":"ThunderID B2B Manage Sample"}'
           if [ "$samples" = "[]" ]; then

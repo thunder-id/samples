@@ -1,0 +1,24 @@
+{
+  "name": "@thunderid/react-express-bff-sample",
+  "private": true,
+  "version": "0.0.1",
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "dev": "concurrently --names server,client --prefix-colors blue,magenta \"npm run dev -w server\" \"npm run dev -w client\"",
+    "start": "concurrently --names server,client --prefix-colors blue,magenta \"npm start -w server\" \"npm run dev -w client\"",
+    "build": "npm run build -w client"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  },
+  "overrides": {
+    "dompurify": "3.4.17"
+  },
+  "allowScripts": {
+    "esbuild": true,
+    "core-js": false
+  }
+}
