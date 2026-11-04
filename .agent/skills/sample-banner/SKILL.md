@@ -52,7 +52,7 @@ To add a logo:
    - `path`: the sample directory, `<area>/<sample>`. The PNG is named after it, with the
      slash replaced: `quickstarts/react` renders to `quickstarts-react.png`.
    - `alt`: the image alt text, `ThunderID <Technology> <Quickstart|Sample>`.
-   - `badge`: `QUICKSTART`, `INTEGRATION`, `PATTERN`, `SELF-CARE SAMPLE`, or `B2B SAMPLE`, matching the area.
+   - `badge`: `QUICKSTART`, `INTEGRATION`, `PATTERN`, `SELF-CARE SAMPLE`, or `MANAGEMENT SAMPLE`, matching the area.
    - `logo`: a key in `logos.json`.
    - `title`: short, with the emphasized part wrapped in `<accent>`, for example
      `React <accent>Quickstart</accent>`. It has to fit on one line at 48px.

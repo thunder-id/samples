@@ -12,7 +12,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
 import dev.thunderid.android.EncryptedStorageAdapter
 import dev.thunderid.android.ThunderIDConfig
-import dev.thunderid.android.auth.FederatedAuthSession
+import dev.thunderid.android.api.auth.FederatedAuthSession
 import dev.thunderid.compose.ThunderIDProvider
 
 // Matches the ThunderID blue used throughout AuthScreen/HomeScreen — the SDK's form

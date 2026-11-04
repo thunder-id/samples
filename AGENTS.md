@@ -13,7 +13,7 @@ Samples live at `<area>/<sample>`:
 | `integrations` | ThunderID used through a third-party library, such as Better Auth or flutter_appauth |
 | `patterns` | An architecture that spans more than one app, such as a React app with an Express BFF |
 | `self-care` | Apps built on ThunderID's self-service features |
-| `b2b` | Apps where an administrator manages an organization's ThunderID resources |
+| `management` | Apps where an administrator manages an organization's ThunderID resources |
 
 Each sample is released on its own, as a source zip tagged `sample/<area>/<sample>/v<version>`.
 `.github/workflows/release.yml` builds the release and `pr-builder.yml` builds every sample
@@ -55,7 +55,7 @@ for a mobile app) and adapt it rather than starting from scratch.
 
 1. The banner image, then a blank line. See the sample-banner skill.
 2. `# <Title>`, matching the banner's alt text, such as `ThunderID React Quickstart` or
-   `ThunderID Manage Sample`.
+   `ThunderID Admin Sample`.
 3. An intro of one or two paragraphs: what the app does, and the SDK or package it uses, linked.
    A short list or table of what it shows can follow.
 4. `## Prerequisites`: the runtime and tools with minimum versions, then a running ThunderID
