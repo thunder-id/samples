@@ -110,8 +110,8 @@ on:
         type: boolean
         default: false
 
-      sample_b2b_manage:
-        description: 'b2b/manage'
+      sample_management_admin:
+        description: 'management/admin'
         required: false
         type: boolean
         default: false
@@ -154,7 +154,7 @@ jobs:
           sample_flutter_app_auth: ${{ github.event.inputs.sample_flutter_app_auth }}
           sample_patterns_react_express_bff: ${{ github.event.inputs.sample_patterns_react_express_bff }}
           sample_self_care_account: ${{ github.event.inputs.sample_self_care_account }}
-          sample_b2b_manage: ${{ github.event.inputs.sample_b2b_manage }}
+          sample_management_admin: ${{ github.event.inputs.sample_management_admin }}
         run: |
           samples='[]'
           add() {
@@ -176,7 +176,7 @@ jobs:
           add sample_flutter_app_auth '{"path":"integrations/flutter-app-auth","emoji":"🦋","title":"ThunderID Flutter AppAuth Sample"}'
           add sample_patterns_react_express_bff '{"path":"patterns/react-express-bff","emoji":"🛡️","title":"ThunderID React Express BFF Sample"}'
           add sample_self_care_account '{"path":"self-care/account","emoji":"👤","title":"ThunderID Self-Care Account Sample"}'
-          add sample_b2b_manage '{"path":"b2b/manage","emoji":"🏢","title":"ThunderID B2B Manage Sample"}'
+          add sample_management_admin '{"path":"management/admin","emoji":"🏢","title":"ThunderID Management Admin Sample"}'
           if [ "$samples" = "[]" ]; then
             echo "❌ No sample selected. Check at least one sample_* input."
             exit 1

@@ -136,13 +136,13 @@
       "desc": "A React app where users view and edit their own profile and change their password."
     },
     {
-      "path": "b2b/manage",
-      "alt": "ThunderID Manage Sample",
-      "badge": "B2B SAMPLE",
+      "path": "management/admin",
+      "alt": "ThunderID Admin Sample",
+      "badge": "MANAGEMENT SAMPLE",
       "logo": "react",
-      "title": "Manage <accent>App</accent>",
+      "title": "Admin <accent>App</accent>",
       "accent": "#2DD4BF",
-      "desc": "A React app where an administrator manages ThunderID resources, starting with agent onboarding."
+      "desc": "A React app where an administrator manages users, groups, roles, applications and agents with @thunderid/react."
     }
   ]
 }
