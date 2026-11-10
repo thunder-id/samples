@@ -1,7 +1,7 @@
 {
   "name": "@thunderid/account",
   "private": true,
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "ThunderID Account app, where users manage their own profile and credentials.",
   "license": "Apache-2.0",
   "type": "module",
