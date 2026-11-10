@@ -87,6 +87,10 @@ JavaScript samples use npm, so that a developer who copies one out needs nothing
 - Use the npm equivalents of pnpm settings: `overrides` in `package.json` for a pinned transitive
   version, and `allowScripts` (written with `npm approve-scripts` and `npm deny-scripts`) for
   install scripts.
+- To update a transitive dependency, add an `overrides` entry for it in `package.json` and
+  update `package-lock.json` to match. Never change only the lockfile: `npm install` can
+  resolve the old version again, for example when the lockfile is regenerated or when another
+  repository adds its own overrides to the sample, as the `javascript-sdks` E2E tests do.
 - npm audit has no ignore list. An advisory that has no fix and is accepted goes in
   `AUDIT_ALLOWED_GHSAS` in `.github/workflows/pr-builder.yml`, with its justification.
 
