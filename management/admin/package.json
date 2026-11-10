@@ -1,7 +1,7 @@
 {
   "name": "@thunderid/admin",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "ThunderID Admin app, where an administrator manages users, groups, roles, applications, agents, flows, projects and organization units.",
   "license": "Apache-2.0",
   "type": "module",
