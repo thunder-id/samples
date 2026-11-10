@@ -1,6 +1,6 @@
 name: flutter_quickstart
 description: ThunderID Flutter B2C sample — demonstrates sign-in, profile display, and sign-out.
-version: 0.0.1+2
+version: 1.0.0+3
 publish_to: none
 
 environment:
