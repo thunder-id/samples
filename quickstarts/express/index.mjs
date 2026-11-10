@@ -246,13 +246,13 @@ app.get('/', async (req, res) => {
     ${endpoint({
       method: 'PATCH',
       path: '/api/me/credentials',
-      summary: 'Updates credentials (such as password) for the authenticated caller.',
+      summary: 'Updates one credential (such as password) for the authenticated caller. Changing it needs the current value.',
       protectedRoute: true,
       curl: [
         'curl -X PATCH http://localhost:3000/api/me/credentials \\',
         `  -H "Authorization: ${bearerLine(accessToken)}" \\`,
         '  -H "Content-Type: application/json" \\',
-        '  -d \'{"password": "n3wP@ssword!"}\'',
+        '  -d \'{"name": "password", "currentValue": "0ldP@ssword!", "newValue": "n3wP@ssword!"}\'',
       ],
       sample: '204 No Content',
     })}
