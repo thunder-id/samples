@@ -1,7 +1,7 @@
 {
   "name": "@thunderid/nuxt-quickstart",
   "private": true,
-  "version": "0.0.1",
+  "version": "1.0.0",
   "scripts": {
     "prepare-dev": "node scripts/prepare-dev.cjs",
     "prepare-dev:redirect": "node scripts/prepare-dev.cjs --flow=redirect",
