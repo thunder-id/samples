@@ -64,6 +64,15 @@
       "desc": "A Next.js App Router app that signs users in with @thunderid/nextjs, on the client and the server."
     },
     {
+      "path": "quickstarts/nextjs-b2b",
+      "alt": "ThunderID Next.js B2B Quickstart",
+      "badge": "QUICKSTART",
+      "logo": "nextjs",
+      "title": "Next.js <accent>B2B Quickstart</accent>",
+      "accent": "#FFFFFF",
+      "desc": "A Next.js app where companies sign up as organizations, switch between them and plug in their own identity provider with @thunderid/nextjs."
+    },
+    {
       "path": "quickstarts/node",
       "alt": "ThunderID Node.js Quickstart",
       "badge": "QUICKSTART",
@@ -89,6 +98,15 @@
       "title": "React <accent>Quickstart</accent>",
       "accent": "#61DAFB",
       "desc": "A React and Vite app that signs users in with @thunderid/react and shows their profile and tokens."
+    },
+    {
+      "path": "quickstarts/react-b2b",
+      "alt": "ThunderID React B2B Quickstart",
+      "badge": "QUICKSTART",
+      "logo": "react",
+      "title": "React <accent>B2B Quickstart</accent>",
+      "accent": "#61DAFB",
+      "desc": "A React app where companies sign up as organizations, switch between them and plug in their own identity provider with @thunderid/react."
     },
     {
       "path": "quickstarts/vue",
