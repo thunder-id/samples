@@ -54,6 +54,14 @@ Apps where an administrator manages an organization's ThunderID resources.
 |---|---|---|
 | [`admin`](management/admin) | [![release](https://img.shields.io/github/v/release/thunder-id/samples?filter=sample/management/admin/*)](https://github.com/thunder-id/samples/releases?q=sample%2Fmanagement%2Fadmin&expanded=true) | React admin app for managing users, groups, roles, applications, agents, flows, projects and organization units |
 
+### B2B
+
+Apps that serve many business customers, each one an organization of its own.
+
+| Sample | Release | Description |
+|---|---|---|
+| [`wayfinder-enterprise`](b2b/wayfinder-enterprise) | [![release](https://img.shields.io/github/v/release/thunder-id/samples?filter=sample/b2b/wayfinder-enterprise/*)](https://github.com/thunder-id/samples/releases?q=sample%2Fb2b%2Fwayfinder-enterprise&expanded=true) | Next.js travel management app where companies sign up as organizations, manage their team and plug in their own identity provider |
+
 ## Contributing
 
 Please refer to the [Contributing Guide](https://thunderid.dev/community/overview) for the different ways to contribute to this project and the relevant guidelines.

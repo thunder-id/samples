@@ -116,6 +116,12 @@ on:
         type: boolean
         default: false
 
+      sample_b2b_wayfinder_enterprise:
+        description: 'b2b/wayfinder-enterprise'
+        required: false
+        type: boolean
+        default: false
+
 permissions:
   contents: write
 
@@ -155,6 +161,7 @@ jobs:
           sample_patterns_react_express_bff: ${{ github.event.inputs.sample_patterns_react_express_bff }}
           sample_self_care_account: ${{ github.event.inputs.sample_self_care_account }}
           sample_management_admin: ${{ github.event.inputs.sample_management_admin }}
+          sample_b2b_wayfinder_enterprise: ${{ github.event.inputs.sample_b2b_wayfinder_enterprise }}
         run: |
           samples='[]'
           add() {
@@ -177,6 +184,7 @@ jobs:
           add sample_patterns_react_express_bff '{"path":"patterns/react-express-bff","emoji":"🛡️","title":"ThunderID React Express BFF Sample"}'
           add sample_self_care_account '{"path":"self-care/account","emoji":"👤","title":"ThunderID Self-Care Account Sample"}'
           add sample_management_admin '{"path":"management/admin","emoji":"🏢","title":"ThunderID Management Admin Sample"}'
+          add sample_b2b_wayfinder_enterprise '{"path":"b2b/wayfinder-enterprise","emoji":"🧭","title":"ThunderID Wayfinder Enterprise Sample"}'
           if [ "$samples" = "[]" ]; then
             echo "❌ No sample selected. Check at least one sample_* input."
             exit 1
