@@ -6,7 +6,7 @@ A Flutter app that signs users in to ThunderID with [flutter_appauth](https://pu
 
 ## Prerequisites
 
-- Flutter 3.38.1 or later
+- Flutter 3.47 or later
 - An Android emulator running API 24 or later, or an iOS simulator running iOS 13 or later
 - A running ThunderID server (`https://localhost:8090` by default)
 

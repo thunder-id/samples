@@ -46,9 +46,10 @@ jobs:
           fail-on-severity: high
           deny-licenses: GPL-3.0-only,GPL-3.0-or-later,AGPL-3.0-only,AGPL-3.0-or-later
           allow-ghsas: ${{ env.AUDIT_ALLOWED_GHSAS }}
-          # ThunderID's own Apache-2.0 package, which the dependency graph reports with the non-SPDX
-          # lowercase id `apache-2.0`, failing the license validity check.
-          allow-dependencies-licenses: pkg:pub/thunderid_flutter
+          # ThunderID's own Apache-2.0 package and Flutter's BSD-3-Clause material_ui, which the
+          # dependency graph reports with the non-SPDX lowercase ids `apache-2.0` and
+          # `bsd-3-clause`, failing the license validity check.
+          allow-dependencies-licenses: pkg:pub/thunderid_flutter,pkg:pub/material_ui
           comment-summary-in-pr: always
           base-ref: ${{ github.event.pull_request.base.sha }}
           head-ref: ${{ github.event.pull_request.head.sha }}

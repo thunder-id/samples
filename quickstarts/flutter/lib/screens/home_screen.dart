@@ -3,10 +3,11 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:thunderid_flutter/thunderid_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../legacy_material.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -618,7 +619,7 @@ class _AccountSectionScreen extends StatelessWidget {
                 style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: _kTextDark),
               ),
               const SizedBox(height: 20),
-              child,
+              LegacyMaterial(child: child),
             ],
           ),
         ),
