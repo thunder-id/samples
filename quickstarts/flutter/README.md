@@ -13,7 +13,7 @@ What the app does:
 
 ## Prerequisites
 
-- Flutter 3.16 or later
+- Flutter 3.47 or later
 - An Android emulator or device, or an iOS simulator or device
 - A running ThunderID server (`https://localhost:8090` by default)
 

@@ -1,7 +1,7 @@
 // Copyright 2026 The ThunderID Authors
 // SPDX-License-Identifier: Apache-2.0
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:thunderid_flutter/thunderid_flutter.dart';
 import 'screens/auth_screen.dart';
 import 'screens/home_screen.dart';
@@ -17,6 +17,9 @@ class QuickstartApp extends StatelessWidget {
         colorSchemeSeed: const Color(0xFF3688FF),
         useMaterial3: true,
       ),
+      // thunderid_flutter widgets still use package:flutter/material.dart.
+      // ignore: deprecated_member_use
+      builder: (context, child) => MaterialUiCompatibilityBridge(child: child!),
       home: const _RootScreen(),
     );
   }

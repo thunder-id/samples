@@ -1,9 +1,10 @@
 // Copyright 2026 The ThunderID Authors
 // SPDX-License-Identifier: Apache-2.0
 
-import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:thunderid_flutter/thunderid_flutter.dart';
+import '../legacy_material.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -225,7 +226,7 @@ class _AuthSheetState extends State<_AuthSheet> {
                 child: SingleChildScrollView(
                   controller: scrollController,
                   padding: const EdgeInsets.fromLTRB(24, 8, 24, 32),
-                  child: _buildSheetContent(ctx, applicationId),
+                  child: LegacyMaterial(child: _buildSheetContent(ctx, applicationId)),
                 ),
               ),
             ],
