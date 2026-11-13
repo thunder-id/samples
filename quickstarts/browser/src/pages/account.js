@@ -80,10 +80,18 @@ function renderCredentialCard(credential, { schema, openAttribute }) {
 // `BaseChangeCredential`'s unavailable rendering in the React/Vue SDKs.
 function renderCredentialFields(credential) {
   const nameLower = credential.title.toLowerCase()
+  const currentFieldId = `cred-${credential.attribute}-current`
   const newFieldId = `cred-${credential.attribute}-new`
   const confirmFieldId = `cred-${credential.attribute}-confirm`
 
   return `
+    <div class="cred-field">
+      <label class="cred-label" for="${currentFieldId}">Current ${escapeHtml(credential.title)}</label>
+      <div class="cred-input-wrap">
+        <input id="${currentFieldId}" type="password" class="cred-input" data-cred-field="currentValue" placeholder="Enter your current ${escapeHtml(nameLower)}" autocomplete="current-password" />
+        <button type="button" class="cred-eye-btn" data-cred-toggle-visibility aria-label="Show password">${ICON_EYE}</button>
+      </div>
+    </div>
     <div class="cred-field">
       <label class="cred-label" for="${newFieldId}">New ${escapeHtml(credential.title)}</label>
       <div class="cred-input-wrap">
@@ -175,6 +183,7 @@ function renderAccountPage({ tab, user, schema, profile, openAttribute }) {
 
 function attachCredentialForm(formEl, { attribute, schema, baseUrl, auth, onDone }) {
   const policy = resolveChangeCredentialPolicy(schema, attribute)
+  const currentInput = formEl.querySelector('[data-cred-field="currentValue"]')
   const newInput = formEl.querySelector('[data-cred-field="newValue"]')
   const confirmInput = formEl.querySelector('[data-cred-field="confirmValue"]')
   const reqBox = formEl.querySelector('[data-cred-requirements]')
@@ -221,9 +230,14 @@ function attachCredentialForm(formEl, { attribute, schema, baseUrl, auth, onDone
 
     try {
       const fetcher = createFetcher(auth)
-      await updateMeCredentials({ baseUrl, payload: { [attribute]: newInput.value }, fetcher })
+      await updateMeCredentials({
+        baseUrl,
+        payload: { name: attribute, currentValue: currentInput.value || undefined, newValue: newInput.value },
+        fetcher,
+      })
 
       successBox.hidden = false
+      currentInput.value = ''
       newInput.value = ''
       confirmInput.value = ''
       evaluate()
