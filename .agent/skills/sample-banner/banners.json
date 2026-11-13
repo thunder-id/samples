@@ -161,6 +161,15 @@
       "title": "Admin <accent>App</accent>",
       "accent": "#2DD4BF",
       "desc": "A React app where an administrator manages users, groups, roles, applications and agents with @thunderid/react."
+    },
+    {
+      "path": "b2b/wayfinder-enterprise",
+      "alt": "ThunderID Wayfinder Enterprise Sample",
+      "badge": "B2B SAMPLE",
+      "logo": "nextjs",
+      "title": "Wayfinder <accent>Enterprise</accent>",
+      "accent": "#FFFFFF",
+      "desc": "A B2B travel app where companies sign up as organizations and plug in their own identity provider, built with @thunderid/nextjs."
     }
   ]
 }

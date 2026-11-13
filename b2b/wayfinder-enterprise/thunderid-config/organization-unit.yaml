@@ -1,0 +1,10 @@
+# Wayfinder Enterprise: a root organization unit in the Default project, the parent of every company
+# that signs up. Import this file before thunderid-config.yaml, which places the app, its roles and
+# its flows in this organization unit.
+
+resource_type: organization_unit
+id: 019f0a10-0000-7000-8000-000000000001
+handle: wayfinder-enterprise
+name: Wayfinder Enterprise
+projectId: 01900000-0000-7000-8000-000000000002
+description: Parent of every company that signs up to Wayfinder Enterprise

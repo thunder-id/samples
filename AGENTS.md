@@ -14,6 +14,7 @@ Samples live at `<area>/<sample>`:
 | `patterns` | An architecture that spans more than one app, such as a React app with an Express BFF |
 | `self-care` | Apps built on ThunderID's self-service features |
 | `management` | Apps where an administrator manages an organization's ThunderID resources |
+| `b2b` | Apps that serve many business customers, each one an organization, such as a B2B SaaS app |
 
 Each sample is released on its own, as a source zip tagged `sample/<area>/<sample>/v<version>`.
 `.github/workflows/release.yml` builds the release and `pr-builder.yml` builds every sample
