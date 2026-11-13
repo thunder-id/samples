@@ -1,0 +1,936 @@
+# Next.js B2B Quickstart: the ThunderID resources of the B2B quickstart.
+#
+# Every company that signs up becomes a child organization unit of "Next.js B2B Quickstart". The
+# user type, the two roles, the sign-in flow and the application belong to that parent unit and are
+# shared with every child, so a company works the moment it signs up.
+#
+# Import organization-unit.yaml first. Every resource here is placed in the organization unit that
+# file creates, and the Console's test import only finds an organization unit that already exists.
+
+# Owned by the platform organization, so every company beneath it can use it.
+resource_type: user_type
+id: 019f0b20-0000-7000-8000-000000000002
+category: user
+handle: nextjs-b2b-user
+displayName: Next.js B2B User
+ouHandle: nextjs-b2b-quickstart
+allowSelfRegistration: true
+systemAttributes:
+  display: username
+schema: {
+    "username": {
+      "type": "string",
+      "displayName": "Username",
+      "required": false,
+      "unique": true
+    },
+    "password": {
+      "type": "string",
+      "displayName": "Password",
+      "required": false,
+      "credential": true
+    },
+    "email": {
+      "type": "string",
+      "displayName": "Email",
+      "required": true,
+      "unique": true,
+      "regex": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+    },
+    "given_name": {
+      "type": "string",
+      "displayName": "First Name",
+      "required": false
+    },
+    "family_name": {
+      "type": "string",
+      "displayName": "Last Name",
+      "required": false
+    }
+  }
+
+---
+# Authorization requests that name no resource get tokens for the System resource server, so a company
+# admin's token carries the org permission. The Next.js SDK cannot name a resource when it switches
+# organizations, so it relies on this default. A Control Plane import writes it; on a Data Plane, only
+# the Control Plane can.
+resource_type: server_config
+name: defaultResourceServer
+value:
+  resourceServerId: 01900000-0000-7000-8000-000000000020
+
+---
+# A company's admin. The org permission lets the admin manage their own company from the app, such as
+# plugging in its enterprise identity provider. On the data plane, the permission reaches only the
+# organization unit the token names. Shared with every company, with its assignments editable.
+resource_type: role
+id: 019f0b20-0000-7000-8000-000000000011
+projectId: 01900000-0000-7000-8000-000000000002
+name: Admin
+description: Manages a company, including its enterprise identity provider
+ouHandle: nextjs-b2b-quickstart
+permissions:
+  - resourceServerId: 01900000-0000-7000-8000-000000000020
+    permissions:
+      - org
+sharingPolicies:
+  - id: 019f0b20-0000-7000-8000-0000000000a1
+    childUnits:
+      mode: all
+
+---
+# A company's member. Grants no permission: the role name in the token is all the app reads.
+resource_type: role
+id: 019f0b20-0000-7000-8000-000000000012
+projectId: 01900000-0000-7000-8000-000000000002
+name: Member
+description: A member of a company
+ouHandle: nextjs-b2b-quickstart
+sharingPolicies:
+  - id: 019f0b20-0000-7000-8000-0000000000a2
+    childUnits:
+      mode: all
+
+---
+# Company sign-up. The first screen asks where the new admin's account lives:
+# - Inside the company: creates the company beneath the platform organization, creates the user in
+#   it and makes the user the company's Admin. The account belongs to that company only.
+# - Shared: creates the company, creates the user in the platform organization, shares the user into
+#   the company and makes the user the company's Admin there. The account can join more companies.
+# The sign-in flow calls this flow, so the new admin is signed in when it completes.
+resource_type: flow
+id: 019f0b20-0000-7000-8000-000000000022
+projectId: 01900000-0000-7000-8000-000000000002
+ouHandle: nextjs-b2b-quickstart
+name: Next.js B2B Quickstart Company Sign-up
+handle: nextjs-b2b-quickstart-signup
+flowType: REGISTRATION
+nodes:
+- id: start
+  type: START
+  onSuccess: user_type_resolver
+- id: user_type_resolver
+  type: TASK_EXECUTION
+  executor:
+    name: UserTypeResolver
+  onSuccess: prompt_account_type
+- id: prompt_account_type
+  type: PROMPT
+  meta:
+    components:
+    - alt: '{{ t(signin:images.app_logo.alt) }}'
+      category: DISPLAY
+      id: image_logo_account_type
+      resourceType: ELEMENT
+      src: '{{ meta(application.logoUrl) }}'
+      type: IMAGE
+      height: '48'
+      width: ''
+    - align: center
+      type: TEXT
+      id: heading_account_type
+      label: Register your company
+      variant: HEADING_1
+    - align: center
+      type: TEXT
+      id: text_account_type
+      label: Choose where your account lives. You become the first admin of the company you create.
+      variant: BODY_1
+    - type: BLOCK
+      id: block_account_type
+      components:
+      - type: ACTION
+        id: action_company_account
+        label: My account belongs to this company
+        variant: PRIMARY
+        eventType: SUBMIT
+      - type: ACTION
+        id: action_shared_account
+        label: I work with several companies
+        variant: OUTLINED
+        eventType: SUBMIT
+  prompts:
+  - action:
+      ref: action_company_account
+      nextNode: prompt_account
+  - action:
+      ref: action_shared_account
+      nextNode: prompt_account_shared
+- id: prompt_account
+  type: PROMPT
+  meta:
+    components:
+    - alt: '{{ t(signin:images.app_logo.alt) }}'
+      category: DISPLAY
+      id: image_logo_account
+      resourceType: ELEMENT
+      src: '{{ meta(application.logoUrl) }}'
+      type: IMAGE
+      height: '48'
+      width: ''
+    - align: center
+      type: TEXT
+      id: heading_account
+      label: Create your account
+      variant: HEADING_1
+    - align: center
+      type: TEXT
+      id: text_account
+      label: Your account lives in the company you create.
+      variant: BODY_1
+    - type: BLOCK
+      id: block_account
+      components:
+      - id: input_username
+        ref: username
+        type: TEXT_INPUT
+        label: Username
+        required: true
+        placeholder: Choose a username
+      - id: input_email
+        ref: email
+        type: EMAIL_INPUT
+        label: Work email
+        required: true
+        placeholder: you@company.com
+      - id: input_password
+        ref: password
+        type: PASSWORD_INPUT
+        label: Password
+        required: true
+        placeholder: Choose a password
+      - type: ACTION
+        id: action_account
+        label: Continue
+        variant: PRIMARY
+        eventType: SUBMIT
+  prompts:
+  - inputs:
+    - ref: input_username
+      identifier: username
+      type: TEXT_INPUT
+      required: true
+    - ref: input_email
+      identifier: email
+      type: EMAIL_INPUT
+      required: true
+    - ref: input_password
+      identifier: password
+      type: PASSWORD_INPUT
+      required: true
+    action:
+      ref: action_account
+      nextNode: credentials_auth
+- id: credentials_auth
+  type: TASK_EXECUTION
+  executor:
+    name: CredentialsAuthExecutor
+  onSuccess: prompt_company
+  onFailure: prompt_account
+- id: prompt_company
+  type: PROMPT
+  meta:
+    components:
+    - alt: '{{ t(signin:images.app_logo.alt) }}'
+      category: DISPLAY
+      id: image_logo_company
+      resourceType: ELEMENT
+      src: '{{ meta(application.logoUrl) }}'
+      type: IMAGE
+      height: '48'
+      width: ''
+    - align: center
+      type: TEXT
+      id: heading_company
+      label: Tell us about your company
+      variant: HEADING_1
+    - align: center
+      type: TEXT
+      id: text_company
+      label: Your team signs in with this organization handle.
+      variant: BODY_1
+    - type: BLOCK
+      id: block_company
+      components:
+      - id: input_ou_name
+        ref: ouName
+        type: TEXT_INPUT
+        label: Company name
+        required: true
+        placeholder: Northstar Labs
+      - id: input_ou_handle
+        ref: ouHandle
+        type: TEXT_INPUT
+        label: Organization handle
+        required: true
+        placeholder: northstar
+      - type: ACTION
+        id: action_company
+        label: Create company
+        variant: PRIMARY
+        eventType: SUBMIT
+  prompts:
+  - inputs:
+    - ref: input_ou_name
+      identifier: ouName
+      type: TEXT_INPUT
+      required: true
+    - ref: input_ou_handle
+      identifier: ouHandle
+      type: TEXT_INPUT
+      required: true
+    action:
+      ref: action_company
+      nextNode: create_company
+- id: create_company
+  type: TASK_EXECUTION
+  executor:
+    name: OUExecutor
+    inputs:
+    - ref: input_ou_name
+      identifier: ouName
+      type: TEXT_INPUT
+      required: true
+    - ref: input_ou_handle
+      identifier: ouHandle
+      type: TEXT_INPUT
+      required: true
+  properties:
+    parentOuId: 019f0b20-0000-7000-8000-000000000001
+  onSuccess: provisioning
+  onIncomplete: prompt_company
+- id: provisioning
+  type: TASK_EXECUTION
+  executor:
+    name: ProvisioningExecutor
+  properties:
+    assignRole: 019f0b20-0000-7000-8000-000000000011
+  onSuccess: end
+  onIncomplete: prompt_schema_attrs
+- id: prompt_schema_attrs
+  type: PROMPT
+  meta:
+    components:
+    - alt: '{{ t(signin:images.app_logo.alt) }}'
+      category: DISPLAY
+      id: image_logo_schema_attrs
+      resourceType: ELEMENT
+      src: '{{ meta(application.logoUrl) }}'
+      type: IMAGE
+      height: '48'
+      width: ''
+    - align: center
+      type: TEXT
+      id: heading_schema_attrs
+      label: '{{ t(signup:forms.user_info.title) }}'
+      variant: HEADING_1
+    - type: BLOCK
+      id: block_dynamic_user_inputs
+      components:
+      - type: DYNAMIC_INPUT_PLACEHOLDER
+        id: dynamic_inputs
+      - type: ACTION
+        id: action_schema_attrs
+        label: '{{ t(signup:forms.user_info.actions.continue.label) }}'
+        variant: PRIMARY
+        eventType: SUBMIT
+  prompts:
+  - inputs: []
+    action:
+      ref: action_schema_attrs
+      nextNode: provisioning
+- id: prompt_account_shared
+  type: PROMPT
+  meta:
+    components:
+    - alt: '{{ t(signin:images.app_logo.alt) }}'
+      category: DISPLAY
+      id: image_logo_account_shared
+      resourceType: ELEMENT
+      src: '{{ meta(application.logoUrl) }}'
+      type: IMAGE
+      height: '48'
+      width: ''
+    - align: center
+      type: TEXT
+      id: heading_account_shared
+      label: Create your shared account
+      variant: HEADING_1
+    - align: center
+      type: TEXT
+      id: text_account_shared
+      label: Your account lives in the platform and is shared into each company you join.
+      variant: BODY_1
+    - type: BLOCK
+      id: block_account_shared
+      components:
+      - id: input_username_shared
+        ref: username
+        type: TEXT_INPUT
+        label: Username
+        required: true
+        placeholder: Choose a username
+      - id: input_email_shared
+        ref: email
+        type: EMAIL_INPUT
+        label: Work email
+        required: true
+        placeholder: you@company.com
+      - id: input_password_shared
+        ref: password
+        type: PASSWORD_INPUT
+        label: Password
+        required: true
+        placeholder: Choose a password
+      - type: ACTION
+        id: action_account_shared
+        label: Continue
+        variant: PRIMARY
+        eventType: SUBMIT
+  prompts:
+  - inputs:
+    - ref: input_username_shared
+      identifier: username
+      type: TEXT_INPUT
+      required: true
+    - ref: input_email_shared
+      identifier: email
+      type: EMAIL_INPUT
+      required: true
+    - ref: input_password_shared
+      identifier: password
+      type: PASSWORD_INPUT
+      required: true
+    action:
+      ref: action_account_shared
+      nextNode: credentials_auth_shared
+- id: credentials_auth_shared
+  type: TASK_EXECUTION
+  executor:
+    name: CredentialsAuthExecutor
+  onSuccess: prompt_company_shared
+  onFailure: prompt_account_shared
+- id: prompt_company_shared
+  type: PROMPT
+  meta:
+    components:
+    - alt: '{{ t(signin:images.app_logo.alt) }}'
+      category: DISPLAY
+      id: image_logo_company_shared
+      resourceType: ELEMENT
+      src: '{{ meta(application.logoUrl) }}'
+      type: IMAGE
+      height: '48'
+      width: ''
+    - align: center
+      type: TEXT
+      id: heading_company_shared
+      label: Tell us about your company
+      variant: HEADING_1
+    - align: center
+      type: TEXT
+      id: text_company_shared
+      label: Your team signs in with this organization handle.
+      variant: BODY_1
+    - type: BLOCK
+      id: block_company_shared
+      components:
+      - id: input_ou_name_shared
+        ref: ouName
+        type: TEXT_INPUT
+        label: Company name
+        required: true
+        placeholder: Northstar Labs
+      - id: input_ou_handle_shared
+        ref: ouHandle
+        type: TEXT_INPUT
+        label: Organization handle
+        required: true
+        placeholder: northstar
+      - type: ACTION
+        id: action_company_shared
+        label: Create company
+        variant: PRIMARY
+        eventType: SUBMIT
+  prompts:
+  - inputs:
+    - ref: input_ou_name_shared
+      identifier: ouName
+      type: TEXT_INPUT
+      required: true
+    - ref: input_ou_handle_shared
+      identifier: ouHandle
+      type: TEXT_INPUT
+      required: true
+    action:
+      ref: action_company_shared
+      nextNode: create_company_shared
+- id: create_company_shared
+  type: TASK_EXECUTION
+  executor:
+    name: OUExecutor
+    inputs:
+    - ref: input_ou_name_shared
+      identifier: ouName
+      type: TEXT_INPUT
+      required: true
+    - ref: input_ou_handle_shared
+      identifier: ouHandle
+      type: TEXT_INPUT
+      required: true
+  properties:
+    parentOuId: 019f0b20-0000-7000-8000-000000000001
+  onSuccess: provisioning_shared
+  onIncomplete: prompt_company_shared
+- id: provisioning_shared
+  type: TASK_EXECUTION
+  executor:
+    name: ProvisioningExecutor
+  properties:
+    provisioningOU: userType
+  onSuccess: share_user
+  onIncomplete: prompt_schema_attrs_shared
+- id: prompt_schema_attrs_shared
+  type: PROMPT
+  meta:
+    components:
+    - alt: '{{ t(signin:images.app_logo.alt) }}'
+      category: DISPLAY
+      id: image_logo_schema_attrs_shared
+      resourceType: ELEMENT
+      src: '{{ meta(application.logoUrl) }}'
+      type: IMAGE
+      height: '48'
+      width: ''
+    - align: center
+      type: TEXT
+      id: heading_schema_attrs_shared
+      label: '{{ t(signup:forms.user_info.title) }}'
+      variant: HEADING_1
+    - type: BLOCK
+      id: block_dynamic_user_inputs_shared
+      components:
+      - type: DYNAMIC_INPUT_PLACEHOLDER
+        id: dynamic_inputs_shared
+      - type: ACTION
+        id: action_schema_attrs_shared
+        label: '{{ t(signup:forms.user_info.actions.continue.label) }}'
+        variant: PRIMARY
+        eventType: SUBMIT
+  prompts:
+  - inputs: []
+    action:
+      ref: action_schema_attrs_shared
+      nextNode: provisioning_shared
+- id: share_user
+  type: TASK_EXECUTION
+  executor:
+    name: SharingExecutor
+    mode: share
+  properties:
+    resourceType: user
+    resourceId: '{{ctx(userID)}}'
+    targetOuId: '{{ctx(ouId)}}'
+  onSuccess: assign_roles
+- id: assign_roles
+  type: TASK_EXECUTION
+  executor:
+    name: RoleExecutor
+    mode: role_assignment
+  properties:
+    roles: 019f0b20-0000-7000-8000-000000000011
+  onSuccess: end
+- id: end
+  type: END
+
+---
+# Sign-in: a username and password, enterprise SSO, or the company sign-up.
+# - The SSO session (Check SSO Session and Save / Load Session) lets a switch to another company
+#   reuse the sign-in without asking for the password again.
+# - Enterprise SSO asks for the company's organization handle and signs in with the identity provider
+#   the company selected for the enterpriseIdp variable. Each company sets its own value.
+# - A password sign-in, and a new company's admin, sign in to the company the user belongs to, or
+#   choose one when the user belongs to several.
+resource_type: flow
+id: 019f0b20-0000-7000-8000-000000000021
+projectId: 01900000-0000-7000-8000-000000000002
+ouHandle: nextjs-b2b-quickstart
+name: Next.js B2B Quickstart Sign-in
+handle: nextjs-b2b-quickstart-signin
+flowType: AUTHENTICATION
+nodes:
+- id: start
+  type: START
+  onSuccess: sso_check
+- id: sso_check
+  type: TASK_EXECUTION
+  executor:
+    name: SSOCheckExecutor
+  properties:
+    checkpointRef: session
+  onSuccess: session
+  onFailure: prompt_signin
+- id: prompt_signin
+  type: PROMPT
+  meta:
+    components:
+    - alt: '{{ t(signin:images.app_logo.alt) }}'
+      category: DISPLAY
+      id: image_logo_signin
+      resourceType: ELEMENT
+      src: '{{ meta(application.logoUrl) }}'
+      type: IMAGE
+      height: '48'
+      width: ''
+    - align: center
+      type: TEXT
+      id: heading_signin
+      label: Sign in to Next.js B2B Quickstart
+      variant: HEADING_1
+    - type: BLOCK
+      id: block_credentials
+      components:
+      - id: input_username
+        ref: username
+        type: TEXT_INPUT
+        label: '{{ t(signin:forms.credentials.fields.username.label) }}'
+        required: true
+        placeholder: '{{ t(signin:forms.credentials.fields.username.placeholder) }}'
+      - id: input_password
+        ref: password
+        type: PASSWORD_INPUT
+        label: '{{ t(signin:forms.credentials.fields.password.label) }}'
+        required: true
+        placeholder: '{{ t(signin:forms.credentials.fields.password.placeholder) }}'
+      - type: ACTION
+        id: action_credentials
+        label: '{{ t(signin:forms.credentials.actions.submit.label) }}'
+        variant: PRIMARY
+        eventType: SUBMIT
+    - category: DISPLAY
+      id: divider_signin
+      label: Or
+      resourceType: ELEMENT
+      type: DIVIDER
+      variant: HORIZONTAL
+    - category: ACTION
+      type: BLOCK
+      id: block_enterprise
+      resourceType: ELEMENT
+      eventType: TRIGGER
+      components:
+      - category: ACTION
+        type: ACTION
+        id: action_enterprise
+        label: Sign in with enterprise SSO
+        resourceType: ELEMENT
+        variant: OUTLINED
+        eventType: TRIGGER
+    - category: DISPLAY
+      id: rich_text_register
+      action:
+        ref: action_register
+      label: <p class="rich-text-paragraph"><span class="rich-text-pre-wrap">New here? </span><a href="#" data-action-ref="action_register" class="rich-text-link"><span class="rich-text-pre-wrap">Register your company</span></a></p>
+      resourceType: ELEMENT
+      type: RICH_TEXT
+  prompts:
+  - inputs:
+    - ref: input_username
+      identifier: username
+      type: TEXT_INPUT
+      required: true
+    - ref: input_password
+      identifier: password
+      type: PASSWORD_INPUT
+      required: true
+    action:
+      ref: action_credentials
+      nextNode: credentials_auth
+  - action:
+      ref: action_enterprise
+      nextNode: resolve_company
+  - action:
+      ref: action_register
+      nextNode: register_company
+- id: credentials_auth
+  type: TASK_EXECUTION
+  executor:
+    name: CredentialsAuthExecutor
+  onSuccess: resolve_user_company
+  onIncomplete: prompt_signin
+- id: register_company
+  type: CALL
+  flow:
+    ref: 019f0b20-0000-7000-8000-000000000022
+  onSuccess: resolve_user_company
+- id: resolve_company
+  type: TASK_EXECUTION
+  executor:
+    name: OUResolverExecutor
+    inputs:
+    - ref: input_org_handle
+      identifier: ouHandle
+      type: TEXT_INPUT
+      required: true
+  properties:
+    resolveFrom: prompt
+    parentOuId: 019f0b20-0000-7000-8000-000000000001
+    directChildrenOnly: true
+  onSuccess: company_settings
+  onIncomplete: prompt_company
+- id: prompt_company
+  type: PROMPT
+  meta:
+    components:
+    - alt: '{{ t(signin:images.app_logo.alt) }}'
+      category: DISPLAY
+      id: image_logo_company
+      resourceType: ELEMENT
+      src: '{{ meta(application.logoUrl) }}'
+      type: IMAGE
+      height: '48'
+      width: ''
+    - align: center
+      type: TEXT
+      id: heading_company
+      label: Enterprise sign-in
+      variant: HEADING_1
+    - align: center
+      type: TEXT
+      id: text_company
+      label: Enter your company's organization handle to continue with its identity provider.
+      variant: BODY_1
+    - type: BLOCK
+      id: block_company
+      components:
+      - id: input_org_handle
+        ref: ouHandle
+        type: TEXT_INPUT
+        label: Organization handle
+        required: true
+        placeholder: northstar
+      - type: ACTION
+        id: action_company
+        label: Continue
+        variant: PRIMARY
+        eventType: SUBMIT
+    - category: DISPLAY
+      id: rich_text_back_signin
+      action:
+        ref: action_back_signin
+      label: <p class="rich-text-paragraph"><a href="#" data-action-ref="action_back_signin" class="rich-text-link"><span class="rich-text-pre-wrap">Back to sign in</span></a></p>
+      resourceType: ELEMENT
+      type: RICH_TEXT
+  prompts:
+  - inputs:
+    - ref: input_org_handle
+      identifier: ouHandle
+      type: TEXT_INPUT
+      required: true
+    action:
+      ref: action_company
+      nextNode: resolve_company
+  - action:
+      ref: action_back_signin
+      nextNode: prompt_signin
+- id: company_settings
+  type: VARIABLES
+  inputs:
+  - identifier: enterpriseIdp
+    type: CONNECTION_SELECT
+    category: IDENTITY_PROVIDER
+    connectionTypes:
+    - oidc
+    label: Enterprise identity provider
+    description: The OpenID Connect identity provider the company's employees sign in with
+    defaultValue: ""
+  onSuccess: enterprise_auth
+- id: enterprise_auth
+  type: TASK_EXECUTION
+  executor:
+    name: OIDCAuthExecutor
+  properties:
+    idpId: "{{var(enterpriseIdp)}}"
+    allowAuthenticationWithoutLocalUser: true
+  onSuccess: provision_member
+- id: provision_member
+  type: TASK_EXECUTION
+  condition:
+    key: "{{ctx(userEligibleForProvisioning)}}"
+    value: "true"
+    onSkip: session
+  executor:
+    name: ProvisioningExecutor
+  properties:
+    assignRole: 019f0b20-0000-7000-8000-000000000012
+  onSuccess: session
+# The app is shared with every company, so a password sign-in or a new company's admin names no
+# organization unit. This decides the company: the one company directly under the platform
+# organization the user belongs to, or the one they pick when there are several. A sign-in that
+# already names a company, such as a switch, passes straight through.
+- id: resolve_user_company
+  type: TASK_EXECUTION
+  executor:
+    name: OUResolverExecutor
+  properties:
+    resolveFrom: prompt
+    parentOuId: 019f0b20-0000-7000-8000-000000000001
+    directChildrenOnly: true
+  onSuccess: session
+  onIncomplete: prompt_user_company
+- id: prompt_user_company
+  type: PROMPT
+  meta:
+    components:
+    - alt: '{{ t(signin:images.app_logo.alt) }}'
+      category: DISPLAY
+      id: image_logo_user_company
+      resourceType: ELEMENT
+      src: '{{ meta(application.logoUrl) }}'
+      type: IMAGE
+      height: '48'
+      width: ''
+    - align: center
+      type: TEXT
+      id: heading_user_company
+      label: Choose your company
+      variant: HEADING_1
+    - align: center
+      type: TEXT
+      id: text_user_company
+      label: You belong to more than one company. Choose the one to sign in to.
+      variant: BODY_1
+    - type: BLOCK
+      id: block_user_company
+      components:
+      - type: SELECT
+        id: input_user_company
+        ref: ouId
+        label: Company
+        required: true
+        options: []
+      - type: ACTION
+        id: action_user_company
+        label: Continue
+        variant: PRIMARY
+        eventType: SUBMIT
+  prompts:
+  - inputs:
+    - ref: input_user_company
+      identifier: ouId
+      type: SELECT
+      required: true
+    action:
+      ref: action_user_company
+      nextNode: resolve_user_company
+- id: session
+  type: TASK_EXECUTION
+  executor:
+    name: SessionExecutor
+  onSuccess: authorization_check
+- id: authorization_check
+  type: TASK_EXECUTION
+  executor:
+    name: AuthorizationExecutor
+  onSuccess: auth_assert
+- id: auth_assert
+  type: TASK_EXECUTION
+  executor:
+    name: AuthAssertExecutor
+  onSuccess: end
+- id: end
+  type: END
+sharingPolicies:
+  - id: 019f0b20-0000-7000-8000-0000000000a3
+    childUnits:
+      mode: all
+      overlayRules:
+        variables.enterpriseIdp:
+          editable: true
+
+---
+# One application serves every company, so it is shared with every child of the platform
+# organization. The roles and ou scopes put the company and the user's roles in that company into
+# the tokens.
+resource_type: application
+id: 019f0b20-0000-7000-8000-000000000031
+projectId: 01900000-0000-7000-8000-000000000002
+ouHandle: nextjs-b2b-quickstart
+name: Next.js B2B Quickstart
+description: Next.js app of the ThunderID B2B quickstart
+type: fullstack
+url: http://localhost:3000
+logoUrl: "emoji:🏢"
+authFlowHandle: nextjs-b2b-quickstart-signin
+isRegistrationFlowEnabled: true
+registrationFlowHandle: nextjs-b2b-quickstart-signup
+isRecoveryFlowEnabled: false
+assertion:
+  validityPeriod: 3600
+loginConsent:
+  validityPeriod: 0
+allowedUserTypes:
+  - nextjs-b2b-user
+sharingPolicies:
+  - id: 019f0b20-0000-7000-8000-0000000000a4
+    childUnits:
+      mode: all
+inboundAuthConfig:
+  - type: oauth2
+    config:
+      clientId: {{.NEXTJS_B2B_CLIENT_ID}}
+      clientSecret: {{.NEXTJS_B2B_CLIENT_SECRET}}
+      redirectUris:
+        - http://localhost:3000
+      postLogoutRedirectUris:
+        - http://localhost:3000
+      grantTypes:
+        - authorization_code
+        - refresh_token
+      responseTypes:
+        - code
+      tokenEndpointAuthMethod: client_secret_basic
+      pkceRequired: true
+      publicClient: false
+      token:
+        accessToken:
+          userConfig:
+            validityPeriod: 3600
+            attributes:
+              - username
+              - email
+              - roles
+              - ouId
+              - ouHandle
+              - ouName
+        idToken:
+          validityPeriod: 3600
+          userAttributes:
+            - username
+            - email
+            - roles
+            - ouId
+            - ouHandle
+            - ouName
+        refreshToken:
+          validityPeriod: 86400
+      userInfo:
+        responseType: JSON
+        userAttributes:
+          - username
+          - email
+          - roles
+          - ouId
+          - ouHandle
+          - ouName
+      scopeClaims:
+        profile:
+          - username
+        email:
+          - email
+        roles:
+          - roles
+        ou:
+          - ouId
+          - ouHandle
+          - ouName

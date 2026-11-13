@@ -62,6 +62,12 @@ on:
         type: boolean
         default: false
 
+      sample_quickstarts_nextjs_b2b:
+        description: 'quickstarts/nextjs-b2b'
+        required: false
+        type: boolean
+        default: false
+
       sample_quickstarts_node:
         description: 'quickstarts/node'
         required: false
@@ -76,6 +82,12 @@ on:
 
       sample_quickstarts_react:
         description: 'quickstarts/react'
+        required: false
+        type: boolean
+        default: false
+
+      sample_quickstarts_react_b2b:
+        description: 'quickstarts/react-b2b'
         required: false
         type: boolean
         default: false
@@ -146,9 +158,11 @@ jobs:
           sample_quickstarts_flutter: ${{ github.event.inputs.sample_quickstarts_flutter }}
           sample_quickstarts_ios: ${{ github.event.inputs.sample_quickstarts_ios }}
           sample_quickstarts_nextjs: ${{ github.event.inputs.sample_quickstarts_nextjs }}
+          sample_quickstarts_nextjs_b2b: ${{ github.event.inputs.sample_quickstarts_nextjs_b2b }}
           sample_quickstarts_node: ${{ github.event.inputs.sample_quickstarts_node }}
           sample_quickstarts_nuxt: ${{ github.event.inputs.sample_quickstarts_nuxt }}
           sample_quickstarts_react: ${{ github.event.inputs.sample_quickstarts_react }}
+          sample_quickstarts_react_b2b: ${{ github.event.inputs.sample_quickstarts_react_b2b }}
           sample_quickstarts_vue: ${{ github.event.inputs.sample_quickstarts_vue }}
           sample_better_auth_nextjs: ${{ github.event.inputs.sample_better_auth_nextjs }}
           sample_flutter_app_auth: ${{ github.event.inputs.sample_flutter_app_auth }}
@@ -168,9 +182,11 @@ jobs:
           add sample_quickstarts_flutter '{"path":"quickstarts/flutter","emoji":"🦋","title":"ThunderID Flutter Quickstart Sample"}'
           add sample_quickstarts_ios '{"path":"quickstarts/ios","emoji":"🍎","title":"ThunderID iOS Quickstart Sample"}'
           add sample_quickstarts_nextjs '{"path":"quickstarts/nextjs","emoji":"▲","title":"ThunderID Next.js Quickstart Sample"}'
+          add sample_quickstarts_nextjs_b2b '{"path":"quickstarts/nextjs-b2b","emoji":"▲","title":"ThunderID Next.js B2B Quickstart Sample"}'
           add sample_quickstarts_node '{"path":"quickstarts/node","emoji":"🟢","title":"ThunderID Node.js Quickstart Sample"}'
           add sample_quickstarts_nuxt '{"path":"quickstarts/nuxt","emoji":"💚","title":"ThunderID Nuxt Quickstart Sample"}'
           add sample_quickstarts_react '{"path":"quickstarts/react","emoji":"⚛️","title":"ThunderID React Quickstart Sample"}'
+          add sample_quickstarts_react_b2b '{"path":"quickstarts/react-b2b","emoji":"⚛️","title":"ThunderID React B2B Quickstart Sample"}'
           add sample_quickstarts_vue '{"path":"quickstarts/vue","emoji":"🟩","title":"ThunderID Vue Quickstart Sample"}'
           add sample_better_auth_nextjs '{"path":"integrations/better-auth-nextjs","emoji":"🔐","title":"ThunderID Better Auth Next.js Sample"}'
           add sample_flutter_app_auth '{"path":"integrations/flutter-app-auth","emoji":"🦋","title":"ThunderID Flutter AppAuth Sample"}'
