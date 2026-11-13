@@ -111,7 +111,7 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ### Switching companies
 
-The organization menu in the header lists every company the account belongs to. Picking one sends the browser to that company's sign-in, where the single sign-on session signs the user in without the password. `@thunderid/nextjs` 1.18.1 redeems the returning code only when no session exists, so the page stays on the previous company. Until the SDK finishes the switch itself, sign out and sign in again to move between companies.
+The organization menu in the header lists every company the account belongs to. Picking one sends the browser to that company's sign-in, where the single sign-on session signs the user in without the password.
 
 ## How it works
 
