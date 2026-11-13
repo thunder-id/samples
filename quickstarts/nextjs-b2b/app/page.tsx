@@ -7,7 +7,7 @@ const decodePayload = (token: string): Record<string, unknown> =>
   JSON.parse(Buffer.from(token.split('.')[1], 'base64url').toString('utf8'))
 
 /**
- * Reads the access token on the server, so it never reaches the browser, and passes its claims to the
+ * Reads the access token on the server, so the app's browser code never receives it, and passes its claims to the
  * page. They change with every switch, because a switch signs the user in to another company and
  * replaces the session's tokens.
  */
