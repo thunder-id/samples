@@ -1,19 +1,16 @@
 # Next.js B2B Quickstart: the ThunderID resources of the B2B quickstart.
 #
-# Every company that signs up becomes a child organization unit of "Next.js B2B Quickstart". The
-# user type, the two roles, the sign-in flow and the application belong to that parent unit and are
-# shared with every child, so a company works the moment it signs up.
-#
-# Import organization-unit.yaml first. Every resource here is placed in the organization unit that
-# file creates, and the Console's test import only finds an organization unit that already exists.
+# Every company that signs up becomes a child organization unit of the Default organization unit.
+# The user type, the two roles, the sign-in flow and the application belong to the Default
+# organization unit and are shared with every child, so a company works the moment it signs up.
 
-# Owned by the platform organization, so every company beneath it can use it.
+# Owned by the Default organization unit, so every company beneath it can use it.
 resource_type: user_type
 id: 019f0b20-0000-7000-8000-000000000002
 category: user
 handle: nextjs-b2b-user
 displayName: Next.js B2B User
-ouHandle: nextjs-b2b-quickstart
+ouHandle: default
 allowSelfRegistration: true
 systemAttributes:
   display: username
@@ -66,9 +63,9 @@ value:
 resource_type: role
 id: 019f0b20-0000-7000-8000-000000000011
 projectId: 01900000-0000-7000-8000-000000000002
-name: Admin
+name: Next.js B2B Admin
 description: Manages a company, including its enterprise identity provider
-ouHandle: nextjs-b2b-quickstart
+ouHandle: default
 permissions:
   - resourceServerId: 01900000-0000-7000-8000-000000000020
     permissions:
@@ -83,9 +80,9 @@ sharingPolicies:
 resource_type: role
 id: 019f0b20-0000-7000-8000-000000000012
 projectId: 01900000-0000-7000-8000-000000000002
-name: Member
+name: Next.js B2B Member
 description: A member of a company
-ouHandle: nextjs-b2b-quickstart
+ouHandle: default
 sharingPolicies:
   - id: 019f0b20-0000-7000-8000-0000000000a2
     childUnits:
@@ -93,15 +90,15 @@ sharingPolicies:
 
 ---
 # Company sign-up. The first screen asks where the new admin's account lives:
-# - Inside the company: creates the company beneath the platform organization, creates the user in
+# - Inside the company: creates the company beneath the Default organization unit, creates the user in
 #   it and makes the user the company's Admin. The account belongs to that company only.
-# - Shared: creates the company, creates the user in the platform organization, shares the user into
+# - Shared: creates the company, creates the user in the Default organization unit, shares the user into
 #   the company and makes the user the company's Admin there. The account can join more companies.
 # The sign-in flow calls this flow, so the new admin is signed in when it completes.
 resource_type: flow
 id: 019f0b20-0000-7000-8000-000000000022
 projectId: 01900000-0000-7000-8000-000000000002
-ouHandle: nextjs-b2b-quickstart
+ouHandle: default
 name: Next.js B2B Quickstart Company Sign-up
 handle: nextjs-b2b-quickstart-signup
 flowType: REGISTRATION
@@ -296,7 +293,7 @@ nodes:
       type: TEXT_INPUT
       required: true
   properties:
-    parentOuId: 019f0b20-0000-7000-8000-000000000001
+    parentOuId: 01900000-0000-7000-8000-000000000001
   onSuccess: provisioning
   onIncomplete: prompt_company
 - id: provisioning
@@ -479,7 +476,7 @@ nodes:
       type: TEXT_INPUT
       required: true
   properties:
-    parentOuId: 019f0b20-0000-7000-8000-000000000001
+    parentOuId: 01900000-0000-7000-8000-000000000001
   onSuccess: provisioning_shared
   onIncomplete: prompt_company_shared
 - id: provisioning_shared
@@ -554,7 +551,7 @@ nodes:
 resource_type: flow
 id: 019f0b20-0000-7000-8000-000000000021
 projectId: 01900000-0000-7000-8000-000000000002
-ouHandle: nextjs-b2b-quickstart
+ouHandle: default
 name: Next.js B2B Quickstart Sign-in
 handle: nextjs-b2b-quickstart-signin
 flowType: AUTHENTICATION
@@ -674,7 +671,7 @@ nodes:
       required: true
   properties:
     resolveFrom: prompt
-    parentOuId: 019f0b20-0000-7000-8000-000000000001
+    parentOuId: 01900000-0000-7000-8000-000000000001
     directChildrenOnly: true
   onSuccess: company_settings
   onIncomplete: prompt_company
@@ -765,8 +762,8 @@ nodes:
     assignRole: 019f0b20-0000-7000-8000-000000000012
   onSuccess: session
 # The app is shared with every company, so a password sign-in or a new company's admin names no
-# organization unit. This decides the company: the one company directly under the platform
-# organization the user belongs to, or the one they pick when there are several. A sign-in that
+# organization unit. This decides the company: the one company directly under the Default
+# organization unit the user belongs to, or the one they pick when there are several. A sign-in that
 # already names a company, such as a switch, passes straight through.
 - id: resolve_user_company
   type: TASK_EXECUTION
@@ -774,7 +771,7 @@ nodes:
     name: OUResolverExecutor
   properties:
     resolveFrom: prompt
-    parentOuId: 019f0b20-0000-7000-8000-000000000001
+    parentOuId: 01900000-0000-7000-8000-000000000001
     directChildrenOnly: true
   onSuccess: session
   onIncomplete: prompt_user_company
@@ -849,13 +846,14 @@ sharingPolicies:
           editable: true
 
 ---
-# One application serves every company, so it is shared with every child of the platform
-# organization. The roles and ou scopes put the company and the user's roles in that company into
-# the tokens.
+# One application serves every company, so it is shared with every child of the Default
+# organization unit. The roles and ou scopes put the company and the user's roles in that company into
+# the tokens. The token exchange grant lets the app's server trade its device secret for another
+# company's tokens, so a switch stays on the page.
 resource_type: application
 id: 019f0b20-0000-7000-8000-000000000031
 projectId: 01900000-0000-7000-8000-000000000002
-ouHandle: nextjs-b2b-quickstart
+ouHandle: default
 name: Next.js B2B Quickstart
 description: Next.js app of the ThunderID B2B quickstart
 type: fullstack
@@ -887,6 +885,7 @@ inboundAuthConfig:
       grantTypes:
         - authorization_code
         - refresh_token
+        - urn:ietf:params:oauth:grant-type:token-exchange
       responseTypes:
         - code
       tokenEndpointAuthMethod: client_secret_basic

@@ -9,12 +9,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@thunderid/react": "1.21.0",
+    "@thunderid/react": "1.22.1",
     "react": "19.2.3",
     "react-dom": "19.2.3"
   },
   "devDependencies": {
-    "@vitejs/plugin-basic-ssl": "2.3.0",
     "@vitejs/plugin-react": "6.0.2",
     "vite": "8.3.4"
   }

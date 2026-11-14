@@ -34,7 +34,8 @@ export default function Nav({ dark, onToggleDark }) {
       <div className="nav-actions">
         <SignedIn>
           {/* Lists the companies the user belongs to and switches the session to the one picked. A switch
-              is a new sign-in, so it names the same resource server as the first one. */}
+              that falls back to a redirect is a new sign-in, so it names the same resource server as the
+              first one. */}
           <OrganizationUnitSwitcher
             scope="siblings"
             switchOptions={{ resource: import.meta.env.VITE_THUNDERID_RESOURCE }}
