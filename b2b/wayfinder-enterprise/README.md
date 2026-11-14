@@ -4,10 +4,10 @@
 
 A B2B travel management app built with Next.js and the [ThunderID Next.js SDK](https://www.npmjs.com/package/@thunderid/nextjs) (`@thunderid/nextjs`). Companies register themselves, their admins set travel policies and manage their team, and employees sign in with a password or with their company's own identity provider to book flights.
 
-Every company is an organization unit (OU) in ThunderID. The app, its two roles and its sign-in flow are defined once and shared with every company, so a new company works the moment it signs up.
+Every company is an organization unit (OU) in ThunderID, beneath the Default OU, which represents the Wayfinder Enterprise platform. The app, its two roles and its sign-in flow are defined once and shared with every company, so a new company works the moment it signs up.
 
 ```text
-Wayfinder Enterprise            a root OU: owns the app, its backend client, the roles, the flows and the user type
+Default                         the Wayfinder Enterprise platform: owns the app, its backend client, the roles, the flows and the user type
 ├── Northstar Labs              a company: its users, groups and identity provider
 ├── Initech                     a company
 └── ...
@@ -16,13 +16,13 @@ Wayfinder Enterprise            a root OU: owns the app, its backend client, the
 | Capability | How the sample does it |
 |---|---|
 | Two app roles | `Wayfinder Admin` (travel policy, team, enterprise SSO, all bookings) and `Wayfinder Member` (book within policy). The app gates pages on the role and its APIs on the permissions in the access token. |
-| App shared with child OUs | The application, both roles and the sign-in flow carry a sharing policy for every child of `Wayfinder Enterprise`. |
+| App shared with child OUs | The application, both roles and the sign-in flow carry a sharing policy for every child of the Default organization unit (Wayfinder Platform). |
 | Company sign-up | A registration flow asks for the first admin's account, then for the company. It creates the company OU, creates the user inside it and assigns `Wayfinder Admin`. The sign-in flow calls it, so the new admin is signed in to the app when it completes. |
 | Password or enterprise SSO | The sign-in flow offers both. Enterprise SSO asks for the organization handle, resolves it to a company, reads the company's `enterpriseIdp` flow variable and signs in with that connection. First-time employees are provisioned into the company as members. |
 | Admin plugs in the company IdP | The SDK's `FlowVariablesForm` sets the company's value of the shared flow's `enterpriseIdp` variable. The app adds an OpenID Connect identity provider owned by the company from its own form, through the SDK's `useManagementRequestConfig`. |
 | Branded sign-in screens | A Wayfinder theme and layout, assigned to the application, replace ThunderID's own branding on the sign-in and sign-up screens. |
 | SDK everywhere | Sign-in and sign-out, route protection, the user, group and role components, the flow variables form and the management request config all come from `@thunderid/nextjs`, the app's only ThunderID dependency. |
-| Declarative setup | [`thunderid-config/`](thunderid-config/) creates every ThunderID resource in two imports. |
+| Declarative setup | [`thunderid-config/`](thunderid-config/) creates every ThunderID resource in one import. |
 
 ## Prerequisites
 
@@ -42,23 +42,19 @@ cd my-app
 
 ### Import the ThunderID resources
 
-The `thunderid-config/` directory holds two importable files that create every resource the app needs, with fixed IDs so the app's configuration works unchanged. Import them through the ThunderID Console, in this order:
+`thunderid-config/thunderid-config.yaml` creates every resource the app needs in the Default organization unit, with fixed IDs so the app's configuration works unchanged. Every company that signs up becomes a child of the Default organization unit. Import it through the ThunderID Console:
 
 1. Generate a client secret for each of the two applications, for example with `openssl rand -base64 32`, and set them as `WAYFINDER_ENTERPRISE_CLIENT_SECRET` and `WAYFINDER_ENTERPRISE_BACKEND_CLIENT_SECRET` in `thunderid-config/thunderid.env`. The sample ships without them, and the Console does not import the file until both are set. You can also enter them in the Console's **Environment variables** editor during the import. Keep the values for the app's `.env.local`.
 2. Sign in to the ThunderID Console. With the quickstart image it is the Control Plane console, `https://localhost:8095/console`.
-3. Choose **Import / Export**, then **Import**.
-4. Upload `thunderid-config/organization-unit.yaml` as the configuration file. It needs no environment file. Choose **Continue**, and once the import test passes, choose **Import configuration**.
-5. Choose **Import / Export**, then **Import** again. Upload `thunderid-config/thunderid-config.yaml` as the configuration file and `thunderid-config/thunderid.env` as the environment variables file. Choose **Continue**, then **Import configuration**.
+3. Choose **Import / Export**, then **Import**. Upload `thunderid-config/thunderid-config.yaml` as the configuration file and `thunderid-config/thunderid.env` as the environment variables file.
+4. Choose **Continue**, then **Import configuration**.
 
-The Console tests each import before it runs it, and that test only finds an organization unit that already exists. The second file places every resource in the organization unit the first one creates, so import the first one on its own.
+The import sets a server config, which only the Control Plane writes, so import there. Imported straight into a Data Plane, it is refused.
 
-The imports create a root organization unit and set a server config, and only the Control Plane writes those, so import there. Imported straight into a Data Plane, both are refused.
-
-The imports create:
+The import creates:
 
 | Resource | Name | What it creates |
 |---|---|---|
-| Organization unit | Wayfinder Enterprise (`wayfinder-enterprise`) | A root OU in the Default project, the parent of every company |
 | User type | Wayfinder User (`wayfinder-user`) | The account schema, with self-registration on. Usable in every company. |
 | Resource server | Wayfinder Enterprise API (`urn:wayfinder-enterprise:api`) | The app's permissions: `booking:view`, `booking:create`, `booking:manage`, `policy:view` and `policy:manage` for the travel APIs, and `view` and `manage` on `user`, `group`, `role` and `sso` for the admin pages |
 | Server config | `defaultResourceServer` | Makes the Wayfinder Enterprise API the default resource server, for authorization requests that name no resource |
