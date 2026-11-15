@@ -1,20 +1,17 @@
 # Wayfinder Enterprise: a B2B travel app on ThunderID.
 #
-# Every company that signs up becomes a child organization unit of "Wayfinder Enterprise". The app,
-# its two roles and its sign-in flow are owned by that parent unit and shared with every child, so a
-# new company can sign in, assign roles and plug in its own enterprise identity provider without any
-# per-company setup by the platform team.
-#
-# Import organization-unit.yaml first. Every resource here is placed in the organization unit that
-# file creates, and the Console's test import only finds an organization unit that already exists.
+# Every company that signs up becomes a child organization unit of the Default organization unit. The
+# app, its two roles and its sign-in flow are owned by the Default organization unit and shared with
+# every child, so a new company can sign in, assign roles and plug in its own enterprise identity
+# provider without any per-company setup by the platform team.
 
-# Owned by the parent unit, so every company beneath it can use it.
+# Owned by the Default organization unit, so every company beneath it can use it.
 resource_type: user_type
 id: 019f0a10-0000-7000-8000-000000000002
 category: user
 handle: wayfinder-user
 displayName: Wayfinder User
-ouHandle: wayfinder-enterprise
+ouHandle: default
 allowSelfRegistration: true
 systemAttributes:
   display: username
@@ -60,7 +57,7 @@ projectId: 01900000-0000-7000-8000-000000000002
 name: Wayfinder Enterprise API
 description: Permissions of the Wayfinder Enterprise app
 identifier: urn:wayfinder-enterprise:api
-ouHandle: wayfinder-enterprise
+ouHandle: default
 delimiter: ":"
 resources:
   - name: Booking
@@ -126,7 +123,7 @@ id: 019f0a10-0000-7000-8000-000000000011
 projectId: 01900000-0000-7000-8000-000000000002
 name: Wayfinder Admin
 description: Manages a company's travel policy, team and enterprise sign-in
-ouHandle: wayfinder-enterprise
+ouHandle: default
 permissions:
   - resourceServerId: 019f0a10-0000-7000-8000-000000000003
     permissions:
@@ -155,7 +152,7 @@ id: 019f0a10-0000-7000-8000-000000000012
 projectId: 01900000-0000-7000-8000-000000000002
 name: Wayfinder Member
 description: Books flights within the company's travel policy
-ouHandle: wayfinder-enterprise
+ouHandle: default
 permissions:
   - resourceServerId: 019f0a10-0000-7000-8000-000000000003
     permissions:
@@ -177,7 +174,7 @@ id: 019f0a10-0000-7000-8000-000000000013
 projectId: 01900000-0000-7000-8000-000000000002
 name: Wayfinder Enterprise Backend
 description: Lets the Wayfinder Enterprise backend manage roles, connections and flow variables for companies
-ouHandle: wayfinder-enterprise
+ouHandle: default
 permissions:
   - resourceServerId: 01900000-0000-7000-8000-000000000020
     permissions:
@@ -188,12 +185,12 @@ assignments:
 
 ---
 # Company sign-up, in two steps: the first admin's account, then the company. Creates the company as
-# a child of "Wayfinder Enterprise", creates the admin inside it and assigns the Wayfinder Admin role.
+# a child of the Default organization unit, creates the admin inside it and assigns the Wayfinder Admin role.
 # The sign-in flow calls this flow, so a new admin is signed in to the app as soon as it completes.
 resource_type: flow
 id: 019f0a10-0000-7000-8000-000000000022
 projectId: 01900000-0000-7000-8000-000000000002
-ouHandle: wayfinder-enterprise
+ouHandle: default
 name: Wayfinder Enterprise Company Sign-up
 handle: wayfinder-enterprise-signup
 flowType: REGISTRATION
@@ -346,7 +343,7 @@ nodes:
       type: TEXT_INPUT
       required: true
   properties:
-    parentOuId: 019f0a10-0000-7000-8000-000000000001
+    parentOuId: 01900000-0000-7000-8000-000000000001
   onSuccess: provisioning
   onIncomplete: prompt_company
 - id: provisioning
@@ -395,7 +392,7 @@ nodes:
 ---
 # Sign-in: a username and password, enterprise SSO, or registering a new company.
 # - Enterprise SSO asks for the company's organization handle, accepts only a company directly beneath
-#   "Wayfinder Enterprise", and signs in with the identity provider that company selected for the
+#   the Default organization unit, and signs in with the identity provider that company selected for the
 #   enterpriseIdp variable. Each company sets its own value through the app; a company that has set
 #   none cannot use enterprise SSO.
 # - Registering calls the company sign-up flow, then finishes sign-in, so the new admin lands in the
@@ -403,7 +400,7 @@ nodes:
 resource_type: flow
 id: 019f0a10-0000-7000-8000-000000000021
 projectId: 01900000-0000-7000-8000-000000000002
-ouHandle: wayfinder-enterprise
+ouHandle: default
 name: Wayfinder Enterprise Sign-in
 handle: wayfinder-enterprise-signin
 flowType: AUTHENTICATION
@@ -515,7 +512,7 @@ nodes:
       required: true
   properties:
     resolveFrom: prompt
-    parentOuId: 019f0a10-0000-7000-8000-000000000001
+    parentOuId: 01900000-0000-7000-8000-000000000001
     directChildrenOnly: true
   onSuccess: company_settings
   onIncomplete: prompt_company
@@ -615,7 +612,7 @@ nodes:
     name: OUResolverExecutor
   properties:
     resolveFrom: prompt
-    parentOuId: 019f0a10-0000-7000-8000-000000000001
+    parentOuId: 01900000-0000-7000-8000-000000000001
     directChildrenOnly: true
   onSuccess: authorization_check
   onIncomplete: prompt_user_company
@@ -764,7 +761,7 @@ layout:
 resource_type: application
 id: 019f0a10-0000-7000-8000-000000000031
 projectId: 01900000-0000-7000-8000-000000000002
-ouHandle: wayfinder-enterprise
+ouHandle: default
 name: Wayfinder Enterprise
 description: B2B travel management sample on ThunderID
 type: fullstack
@@ -868,7 +865,7 @@ inboundAuthConfig:
 resource_type: application
 id: 019f0a10-0000-7000-8000-000000000032
 projectId: 01900000-0000-7000-8000-000000000002
-ouHandle: wayfinder-enterprise
+ouHandle: default
 name: Wayfinder Enterprise Backend
 description: Backend client of the Wayfinder Enterprise sample
 type: m2m
