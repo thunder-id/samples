@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { SignInButton, SignedIn, SignedOut, useGrantedPermissions, useTheme, useThunderID } from '@thunderid/react'
 import EnterpriseSso from './components/EnterpriseSso.jsx'
 import Nav from './components/Nav.jsx'
@@ -138,19 +138,9 @@ function Workspace() {
 }
 
 export default function App() {
-  const { currentOrganizationUnit, isSignedIn, signIn } = useThunderID()
+  const { currentOrganizationUnit } = useThunderID()
   const [dark, setDark] = useState(false)
   const { toggleTheme } = useTheme()
-
-  // A switch returns to the app with an authorization code while the previous company's session is
-  // still signed in, and @thunderid/react 1.21.0 only redeems a code when no session exists. Calling
-  // signIn() lets the SDK finish the switch. Remove this once the SDK completes the switch itself.
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    if (isSignedIn && params.has('code') && params.has('state')) {
-      signIn().catch(() => undefined)
-    }
-  }, [isSignedIn, signIn])
 
   const toggleDark = () => {
     const next = !dark

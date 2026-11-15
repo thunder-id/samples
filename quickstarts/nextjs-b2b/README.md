@@ -2,12 +2,12 @@
 
 # ThunderID Next.js B2B Quickstart
 
-A Next.js App Router app for a B2B SaaS product, built with the [ThunderID Next.js SDK](https://www.npmjs.com/package/@thunderid/nextjs) (`@thunderid/nextjs`). Each company that signs up becomes its own organization in ThunderID. People sign in to one company at a time, their tokens name that company and the roles they hold there, and a company admin plugs in the company's own identity provider. Tokens stay on the server.
+A Next.js App Router app for a B2B SaaS product, built with the [ThunderID Next.js SDK](https://www.npmjs.com/package/@thunderid/nextjs) (`@thunderid/nextjs`).
 
 | What it shows | How |
 |---|---|
 | Company sign-up | The sign-in page offers **Register your company**. It creates the company as an organization unit, creates the first admin and signs them in. |
-| Account inside the company, or shared | Sign-up asks where the account lives. **My account belongs to this company** creates it inside the company. **I work with several companies** creates it in the platform organization and shares it into the company, so it can join more companies later. |
+| Account inside the company, or shared | Sign-up asks where the account lives. **My account belongs to this company** creates it inside the company. **I work with several companies** creates it in the Default organization unit and shares it into the company, so it can join more companies later. |
 | Organization and roles in the token | The page reads the access token on the server and shows its `ouId`, `ouHandle`, `ouName`, `roles` and `scope`. |
 | Switching companies | `OrganizationUnitSwitcher` lists the companies the account belongs to. See [Switching companies](#switching-companies). |
 | Enterprise SSO per company | A company admin adds an OpenID Connect identity provider through the SDK's management fetcher, and selects it with `FlowVariablesForm`. Employees then choose **Sign in with enterprise SSO** and enter the company's handle. |
@@ -30,33 +30,31 @@ cd my-app
 
 ### Import the ThunderID resources
 
-`thunderid-config/` holds two files that create everything the app needs, with fixed IDs so the app's configuration works unchanged. Import them in the ThunderID Console, in this order:
+`thunderid-config/thunderid-config.yaml` creates everything the app needs in the Default organization unit, with fixed IDs so the app's configuration works unchanged. Every company that signs up becomes a child of the Default organization unit. Import it in the ThunderID Console:
 
-1. Sign in to the Console. With the quickstart image it is the Control Plane console, `https://localhost:8095/console`.
-2. On the **welcome screen** (shown on first sign-in, or from the user profile menu), choose **Open** and upload `thunderid-config/organization-unit.yaml`. It needs no environment file.
-3. Open the welcome screen again, upload `thunderid-config/thunderid-config.yaml`, then `thunderid-config/thunderid.env` for its variables.
-
-The Console tests each import before it runs it, and that test only finds an organization unit that already exists. The second file places every resource in the organization unit the first one creates, so import the first one on its own.
+1. Generate a client secret for the application, for example with `openssl rand -base64 32`, and set it as `NEXTJS_B2B_CLIENT_SECRET` in `thunderid-config/thunderid.env`. The sample ships without one, and the Console does not import the file until it is set. You can also enter it in the Console's **Environment variables** editor during the import. Keep the value for the app's `.env`.
+2. Sign in to the Console. With the quickstart image it is the Control Plane console, `https://localhost:8095/console`.
+3. Choose **Import / Export**, then **Import**. Upload `thunderid-config/thunderid-config.yaml` as the configuration file and `thunderid-config/thunderid.env` as the environment variables file.
+4. Choose **Continue**, then **Import configuration**.
 
 | Resource | Name | What it does |
 |---|---|---|
-| Organization unit | Next.js B2B Quickstart (`nextjs-b2b-quickstart`) | The platform organization, a root organization unit in the Default project. Every company that signs up becomes its child. |
 | User type | Next.js B2B User (`nextjs-b2b-user`) | The account schema, with self-registration on. Usable in every company. |
 | Server config | `defaultResourceServer` | Makes the System resource server the default. The app names no resource when it signs in or switches, so its tokens are issued for the System resource server and an admin's token carries `org`. |
-| Role | Admin | Grants the `org` permission, which manages the organization the token names. Shared with every company. |
-| Role | Member | Grants no permission. Shared with every company. |
+| Role | Next.js B2B Admin | Grants the `org` permission, which manages the organization the token names. The role is shared with every company. |
+| Role | Next.js B2B Member | Grants no permission. The role is shared with every company. |
 | Flow | Next.js B2B Quickstart Company Sign-up | Creates the company and its first admin, with the account inside the company or shared into it |
 | Flow | Next.js B2B Quickstart Sign-in | Password, enterprise SSO, or company sign-up. Keeps a single sign-on session, so a switch does not ask for the password again. Shared with every company, which may set `enterpriseIdp`. |
-| Application | Next.js B2B Quickstart | Confidential client with PKCE, redirecting to `http://localhost:3000`. Shared with every company. |
+| Application | Next.js B2B Quickstart | Confidential client with PKCE, redirecting to `http://localhost:3000`. Allows the token exchange grant, so the app's server can switch companies with its device secret. The application is shared with every company. |
 
-The imports create a root organization unit and replace the `defaultResourceServer` setting, and only the Control Plane writes those, so import there. Imported straight into a Data Plane, both are refused.
+The import replaces the `defaultResourceServer` setting, which only the Control Plane writes, so import there. Imported straight into a Data Plane, it is refused.
 
 `thunderid.env` sets two variables:
 
 | Variable | Description |
 |---|---|
 | `NEXTJS_B2B_CLIENT_ID` | Client ID of the application. Defaults to `NEXTJS_B2B_QUICKSTART`. |
-| `NEXTJS_B2B_CLIENT_SECRET` | Client secret of the application. Change it before you import, and set the same value in `.env`. |
+| `NEXTJS_B2B_CLIENT_SECRET` | Client secret of the application. Empty in the sample: set your own before you import, and the same value as `THUNDERID_CLIENT_SECRET` in `.env`. |
 
 ### Configure the app
 
@@ -64,7 +62,7 @@ The imports create a root organization unit and replace the `defaultResourceServ
 cp .env.example .env
 ```
 
-Set `THUNDERID_SECRET` to a long random string, for example from `openssl rand -base64 32`. The other defaults match the import.
+Set `THUNDERID_CLIENT_SECRET` to the client secret you set as `NEXTJS_B2B_CLIENT_SECRET`, and `THUNDERID_SECRET` to a long random string, for example from `openssl rand -base64 32`. The other defaults match the import.
 
 | Variable | Description |
 |---|---|
@@ -72,9 +70,9 @@ Set `THUNDERID_SECRET` to a long random string, for example from `openssl rand -
 | `NEXT_PUBLIC_THUNDERID_CLIENT_ID`, `THUNDERID_CLIENT_SECRET` | Credentials of the application |
 | `NEXT_PUBLIC_THUNDERID_AFTER_SIGN_IN_URL` | Where ThunderID returns the browser after sign-in |
 | `NEXT_PUBLIC_THUNDERID_AFTER_SIGN_OUT_URL` | Where ThunderID returns the browser after sign-out |
-| `NEXT_PUBLIC_THUNDERID_SCOPES` | `ou` and `roles` put the company and the roles held there into the tokens. `org` asks for the permission a company admin needs. |
+| `NEXT_PUBLIC_THUNDERID_SCOPES` | `ou` and `roles` put the company and the roles held there into the tokens. `org` asks for the permission a company admin needs. `device_sso` asks for a device secret, which the server uses to switch companies. |
 | `NEXT_PUBLIC_THUNDERID_SIGN_IN_FLOW_ID` | ID of the sign-in flow, whose `enterpriseIdp` variable a company admin sets |
-| `THUNDERID_SECRET` | Encrypts the session cookie |
+| `THUNDERID_SECRET` | Signs the session cookie |
 | `NODE_TLS_REJECT_UNAUTHORIZED` | Set to `0` in the example to accept a local server's self-signed certificate. Local development only. |
 
 ## Run
@@ -92,33 +90,39 @@ Open [http://localhost:3000](http://localhost:3000).
 
 1. Choose **Sign in**, then **Register your company** on the ThunderID sign-in page.
 2. Choose **My account belongs to this company**. Enter a username, an email and a password, then `Northstar Labs` as the company name and `northstar` as its handle.
-3. You land in the app, signed in to Northstar Labs. The access token names it in `ouId`, `ouHandle` and `ouName`, lists `Admin` in `roles`, and carries `org` in `scope`.
+3. You land in the app, signed in to Northstar Labs. The access token names it in `ouId`, `ouHandle` and `ouName`, lists `Next.js B2B Admin` in `roles`, and carries `org` in `scope`.
 
 ### Plug in the company's identity provider
 
 1. Register an OpenID Connect application in your identity provider, with the callback URL the app shows, `https://localhost:8090/gate/callback`.
 2. In the app's **Enterprise SSO** section, choose **Create a connection** and enter the application's client ID, client secret and endpoints.
 3. Select the new connection and choose **Save changes**.
-4. Sign out, choose **Sign in**, then **Sign in with enterprise SSO**, and enter `northstar`. ThunderID sends you to the company's identity provider. A first-time employee joins the company as a `Member`.
+4. Sign out, choose **Sign in**, then **Sign in with enterprise SSO**, and enter `northstar`. ThunderID sends you to the company's identity provider. A first-time employee joins the company as a `Next.js B2B Member`.
 
 ### One account across several companies
 
-1. Sign out, choose **Sign in**, then **Register your company**, and choose **I work with several companies**. Register `Initech` with the handle `initech`. The account lives in the platform organization and is shared into Initech as its `Admin`.
-2. As a platform administrator, in the ThunderID Console:
-   1. Under **Organization units**, open `Next.js B2B Quickstart` and add two child organization units, `Globex` and `Umbrella`.
-   2. Under **Users**, open the account and select the **Affiliations** tab. Add `Globex` with access to that unit only and the mandated role `Admin`, then `Umbrella` with the mandated role `Member`. Save.
-3. Sign out and sign in with the account's password. ThunderID asks which company to sign in to. Pick **Umbrella**: the page shows `Member`, the token's `scope` has no `org`, and the Enterprise SSO section is gone. Sign in again and pick **Globex**: you are its `Admin`, and you can plug in Globex's own identity provider.
+Until the sample has a flow that invites an existing account into another company, create an account that belongs to every company in the Console:
+
+1. Register a second company, such as `Initech` with the handle `initech`, so there are two to switch between.
+2. In the Control Plane console, `https://localhost:8095/console`, open **Users** and choose **Add user**. Select the user type **Next.js B2B User**, which places the account in the Default organization unit. Enter a username, such as `nextjs-consultant`, an email and a password, then choose **Create user**.
+3. Open the account and select the **Affiliations** tab. Choose **Default and chosen organization units**, keep **All child organization units**, and choose **Save**. The account now belongs to every company beneath the Default organization unit, including the ones that sign up later.
+4. Sign out of the app, choose **Sign in**, and sign in with the account. ThunderID asks which company to sign in to. Pick **northstar**.
+5. Open the organization menu in the header and pick **Initech**. The page switches to Initech without leaving the app or asking for the password.
+
+The account holds no role in these companies, so the token's `roles` is empty and the Enterprise SSO section does not show.
 
 ### Switching companies
 
-The organization menu in the header lists every company the account belongs to. Picking one sends the browser to that company's sign-in, where the single sign-on session signs the user in without the password.
+The organization menu in the header lists every company the account belongs to. Picking one switches the session to that company without leaving the page: the app's server exchanges the session's device secret at the company's token endpoint and rewrites the session cookie with the new tokens. The device secret stays in the server's session store, and the browser never receives it.
+
+When the session holds no device secret, for example after the dev server restarts, the switch sends the browser to that company's sign-in instead, where the single sign-on session signs the user in without the password.
 
 ## How it works
 
-- **One application, many companies.** The application, both roles and the sign-in flow belong to the platform organization and are shared with every child, so a company works the moment it signs up.
-- **Sign-up.** The sign-up flow creates the company beneath the platform organization (`OUExecutor`). For an account inside the company, it creates the user there and assigns `Admin`. For a shared account, it creates the user in the platform organization, shares the user into the company (`SharingExecutor`) and assigns `Admin` there (`RoleExecutor`). The sign-in flow calls the sign-up flow, so the new admin lands in the app signed in.
+- **One application, many companies.** The application, both roles and the sign-in flow belong to the Default organization unit and are shared with every child, so a company works the moment it signs up.
+- **Sign-up.** The sign-up flow creates the company beneath the Default organization unit (`OUExecutor`). For an account inside the company, it creates the user there and assigns `Next.js B2B Admin`. For a shared account, it creates the user in the Default organization unit, shares the user into the company (`SharingExecutor`) and assigns `Next.js B2B Admin` there (`RoleExecutor`). The sign-in flow calls the sign-up flow, so the new admin lands in the app signed in.
 - **Which company a sign-in lands in.** Enterprise SSO decides it from the handle. A password sign-in picks the one company the user belongs to, or asks.
-- **What a company admin can do.** The `Admin` role grants `org` on the System resource server. On a Data Plane, `org` reaches only the organization unit the token names. The SDK sends the management calls from the server with the admin's session, so the admin's changes apply to their own company and the token never reaches the browser.
+- **What a company admin can do.** The `Next.js B2B Admin` role grants `org` on the System resource server. On a Data Plane, `org` reaches only the organization unit the token names. The SDK sends the management calls from the server with the admin's session, so the admin's changes apply to their own company and the app's browser code never receives the token.
 - **Enterprise SSO.** The sign-in flow declares `enterpriseIdp` as a connection variable, and its sharing policy lets every company set its own value. The OpenID Connect step reads the connection from `{{var(enterpriseIdp)}}`.
 
 ## Before you go to production

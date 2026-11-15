@@ -44,10 +44,11 @@ cd my-app
 
 The `thunderid-config/` directory holds two importable files that create every resource the app needs, with fixed IDs so the app's configuration works unchanged. Import them through the ThunderID Console, in this order:
 
-1. Sign in to the ThunderID Console. With the quickstart image it is the Control Plane console, `https://localhost:8095/console`.
-2. Choose **Import / Export**, then **Import**.
-3. Upload `thunderid-config/organization-unit.yaml` as the configuration file. It needs no environment file. Choose **Continue**, and once the import test passes, choose **Import configuration**.
-4. Choose **Import / Export**, then **Import** again. Upload `thunderid-config/thunderid-config.yaml` as the configuration file and `thunderid-config/thunderid.env` as the environment variables file. Choose **Continue**, then **Import configuration**.
+1. Generate a client secret for each of the two applications, for example with `openssl rand -base64 32`, and set them as `WAYFINDER_ENTERPRISE_CLIENT_SECRET` and `WAYFINDER_ENTERPRISE_BACKEND_CLIENT_SECRET` in `thunderid-config/thunderid.env`. The sample ships without them, and the Console does not import the file until both are set. You can also enter them in the Console's **Environment variables** editor during the import. Keep the values for the app's `.env.local`.
+2. Sign in to the ThunderID Console. With the quickstart image it is the Control Plane console, `https://localhost:8095/console`.
+3. Choose **Import / Export**, then **Import**.
+4. Upload `thunderid-config/organization-unit.yaml` as the configuration file. It needs no environment file. Choose **Continue**, and once the import test passes, choose **Import configuration**.
+5. Choose **Import / Export**, then **Import** again. Upload `thunderid-config/thunderid-config.yaml` as the configuration file and `thunderid-config/thunderid.env` as the environment variables file. Choose **Continue**, then **Import configuration**.
 
 The Console tests each import before it runs it, and that test only finds an organization unit that already exists. The second file places every resource in the organization unit the first one creates, so import the first one on its own.
 
@@ -73,7 +74,7 @@ The bundle sets the `defaultResourceServer` server config. An import replaces th
 
 #### Environment variables in `thunderid-config/thunderid.env`
 
-The defaults work as they are for a local setup.
+The other defaults work as they are for a local setup. The two client secrets are empty in the sample, so set your own.
 
 | Variable | Description |
 |---|---|
@@ -84,7 +85,7 @@ The defaults work as they are for a local setup.
 | `WAYFINDER_ENTERPRISE_BACKEND_CLIENT_ID` | Client ID of the `Wayfinder Enterprise Backend` application |
 | `WAYFINDER_ENTERPRISE_BACKEND_CLIENT_SECRET` | Client secret of the `Wayfinder Enterprise Backend` application |
 
-Change a client secret here before you import, and set the same value in the app's `.env.local`.
+Set the same client secrets in the app's `.env.local`, as `THUNDERID_CLIENT_SECRET` and `WAYFINDER_BACKEND_CLIENT_SECRET`.
 
 ### Configure the app
 
@@ -94,7 +95,7 @@ Create your `.env.local`:
 cp .env.example .env.local
 ```
 
-The defaults match the import. Set `THUNDERID_SECRET` in `.env.local` to a long random string; the SDK encrypts the session cookie with it. Generate one with:
+The other defaults match the import. In `.env.local`, set `THUNDERID_CLIENT_SECRET` and `WAYFINDER_BACKEND_CLIENT_SECRET` to the client secrets you set in `thunderid.env`, and `THUNDERID_SECRET` to a long random string; the SDK encrypts the session cookie with it. Generate one with:
 
 ```bash
 openssl rand -base64 32
