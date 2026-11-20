@@ -18,7 +18,7 @@ Default                         the Wayfinder Enterprise platform: owns the app,
 | Two app roles | `Wayfinder Admin` (travel policy, team, enterprise SSO, all bookings) and `Wayfinder Member` (book within policy). The app gates pages on the role and its APIs on the permissions in the access token. |
 | App shared with child OUs | The application, both roles and the sign-in flow carry a sharing policy for every child of the Default organization unit (Wayfinder Platform). |
 | Company sign-up | A registration flow asks for the first admin's account, then for the company. It creates the company OU, creates the user inside it and assigns `Wayfinder Admin`. The sign-in flow calls it, so the new admin is signed in to the app when it completes. |
-| Password or enterprise SSO | The sign-in flow offers both. Enterprise SSO asks for the organization handle, resolves it to a company, reads the company's `enterpriseIdp` flow variable and signs in with that connection. First-time employees are provisioned into the company as members. |
+| Password or enterprise SSO | The sign-in flow offers both. Enterprise SSO asks for the organization handle, resolves it to a company, reads the company's `enterpriseIdp` flow variable and signs in with that connection. First-time employees are provisioned into the company as members, and someone who already has an account, such as the admin who registered the company, links it once with their password. |
 | Admin plugs in the company IdP | The SDK's `FlowVariablesForm` sets the company's value of the shared flow's `enterpriseIdp` variable. The app adds an OpenID Connect identity provider owned by the company from its own form, through the SDK's `useManagementRequestConfig`. |
 | Branded sign-in screens | A Wayfinder theme and layout, assigned to the application, replace ThunderID's own branding on the sign-in and sign-up screens. |
 | SDK everywhere | Sign-in and sign-out, route protection, the user, group and role components, the flow variables form and the management request config all come from `@thunderid/nextjs`, the app's only ThunderID dependency. |
@@ -129,14 +129,15 @@ Open [http://localhost:3000](http://localhost:3000).
 ## Try it
 
 1. **Register a company.** Choose **Get started** on the landing page, then **Register your company** on ThunderID's sign-in page. Enter a username, a work email and a password, then a company name and an organization handle such as `northstar`. ThunderID creates the company, creates you inside it, makes you its admin and signs you in, so you land in the app's workspace. Admins get the sidebar: **Flight booking**, **Travel policy**, **Team and roles** and **Enterprise SSO**.
-2. **Sign in again later.** Choose **Sign in** and use your username and password.
+2. **Sign in again later.** Choose **Get started** and use your username and password.
 3. **Set the travel policy.** Choose the highest cabin, the fare limit and the approval margin. Members see each flight as in policy, needing approval, or out of policy, and the booking API rejects out-of-policy bookings from members.
 4. **Manage the team.** On **Team and roles**, add users, create groups, and give people the admin or member role. Every list and change is limited to your company.
 5. **Connect your identity provider.** On **Enterprise SSO**:
    1. Register an OpenID Connect application in your identity provider, with `https://localhost:8090/gate/callback` as the callback URL.
    2. Under **Identity providers**, choose **Add identity provider** and enter that application's client ID, client secret and endpoints.
    3. Under **Enterprise SSO connection**, select it and choose **Save changes**.
-6. **Sign in as an employee.** Sign out, choose **Sign in**, then **Sign in with enterprise SSO**, and enter your organization handle. ThunderID sends you to your company's identity provider. On the first sign-in, ThunderID adds you to the company as a member, and you land on the booking page.
+6. **Sign in as an employee.** Sign out, choose **Get started**, then **Sign in with enterprise SSO**, and enter your organization handle. ThunderID sends you to your company's identity provider. On the first sign-in, ThunderID adds you to the company as a member, and you land on the booking page.
+7. **Link your admin account.** Sign out, then sign in with enterprise SSO as the identity provider user whose email is the one you registered the company with. ThunderID finds your existing account and asks you to sign in to it once with your username and password. It then links the two, so you stay the company's admin, and later enterprise sign-ins skip that step.
 
 When an employee tries enterprise SSO for a company that has not set an identity provider, ThunderID shows "No identity provider has been set up for your organization. Contact your administrator".
 
@@ -171,7 +172,7 @@ flowchart LR
 
 The user is created in the new company OU, and the shared `Wayfinder Admin` role is assigned to them there. A taken username sends the user back to the account step, and a taken organization handle back to the company step.
 
-The sign-in flow runs this flow through a `CALL` node when the user chooses **Register your company** on the sign-in page, and then finishes sign-in for the new admin. A sign-up started outside a sign-in request, such as on ThunderID's `/gate/signup` page, has no app to return a signed-in user to. So the landing page's **Get started** and **Create workspace** buttons start sign-in, and the user chooses the option there.
+The sign-in flow runs this flow through a `CALL` node when the user chooses **Register your company** on the sign-in page, and then finishes sign-in for the new admin. A sign-up started outside a sign-in request, such as on ThunderID's `/gate/signup` page, has no app to return a signed-in user to. So the landing page has one **Get started** button, which starts sign-in, and the user chooses to register there.
 
 ### Sign-in
 
@@ -184,7 +185,10 @@ flowchart LR
     O -.->|Back to sign in| S
     O --> V[VARIABLES<br/>enterpriseIdp for the company]
     V --> I[OIDCAuthExecutor<br/>idpId: var enterpriseIdp]
-    I --> J[ProvisioningExecutor<br/>first sign-in only,<br/>assignRole: Wayfinder Member]
+    I --> L[AccountLinkingExecutor<br/>email matches an account]
+    L -.->|match| K[Link prompt, then<br/>CredentialsAuthExecutor]
+    K -.-> L
+    L --> J[ProvisioningExecutor<br/>first sign-in only,<br/>assignRole: Wayfinder Member]
     C --> U[OUResolverExecutor<br/>the user's company]
     R --> U
     U --> Z[AuthorizationExecutor<br/>and AuthAssertExecutor]
@@ -192,6 +196,8 @@ flowchart LR
 ```
 
 The app is shared with every company, so a sign-in must decide which company it signs in to before ThunderID issues a token. Enterprise SSO decides it from the handle before the user signs in. A password sign-in and a new company's admin decide it after: a second `OUResolverExecutor` (`resolveFrom: prompt`, `directChildrenOnly`) picks the one company under `Wayfinder Enterprise` the user belongs to, and asks the user to choose when there are several.
+
+ThunderID signs in a local user from an identity provider only through a link it has recorded for that connection. On the first enterprise sign-in there is none, so `AccountLinkingExecutor` looks for an existing account whose email matches the one the identity provider sent. With no match, `ProvisioningExecutor` creates the member and records the link. With a match, the user signs in to that account with its username and password, and the executor links the identity to it only if that is the account that matched. That keeps an admin who registered the company with a password from getting a second, member-only account. The match screen's **Back to sign in** opens the app's landing page with `?signin`, which starts a new sign-in. Going back within the same sign-in would keep the company it chose and the pending match. The app's admin route sets `email` as the account-linking attribute on every identity provider an admin adds. Email is unique in the Wayfinder user type, so it matches at most one account.
 
 The flow declares `enterpriseIdp` as a `CONNECTION_SELECT` variable with no default, and its sharing policy lets every company set it (`variables.enterpriseIdp: {editable: true}`). The OIDC executor reads the connection from `{{var(enterpriseIdp)}}`, so one flow serves every company with that company's own identity provider.
 
@@ -213,7 +219,7 @@ The admin components still manage ThunderID resources. The app passes `endpoints
 
 1. Verifies the caller's access token and requires the Wayfinder permission for the call: `view` to read and `manage` to change, on `user` for users and the user type, `group` for groups and their members, `role` for role assignments, and `sso` for identity provider connections and the sign-in flow's variables. Only `Wayfinder Admin` grants them.
 2. Lets through only the calls the admin pages make: the company's users and groups, group members, the two Wayfinder roles and their assignments, listing and adding the company's identity provider connections, the sign-in flow as the company sees it, what the company may set on it and its `enterpriseIdp` value, and the Wayfinder user type.
-3. Replaces the OU in every request with the caller's own `ouId`.
+3. Replaces the OU in every request with the caller's own `ouId`, and sets `email` as the account-linking attribute on an identity provider it adds.
 4. Forwards the call with a token of the `Wayfinder Enterprise Backend` client issued for the caller's company.
 
 The backend client is shared with every company. For each call, the app requests its token at the company's own token endpoint, `POST /ou/{ouId}/oauth2/token` with the `client_credentials` grant, and caches one token per company. The token names the company in its `ouId`, `ouHandle` and `ouName` claims. It carries `system` through the `Wayfinder Enterprise Backend` role, which is assigned in the client's own organization unit: only those roles count when it gets a token for a company. A company the client is not shared with gets no token (`400 unauthorized_client`).
@@ -230,7 +236,7 @@ wayfinder-enterprise/
     ├── proxy.ts                      Session refresh and route protection (thunderIDProxy)
     ├── app/
     │   ├── layout.tsx                ThunderIDProvider, with the admin endpoints
-    │   ├── page.tsx                  Landing page
+    │   ├── page.tsx                  Landing page, which starts sign-in when opened with ?signin
     │   ├── workspace/                Bookings, travel policy, team, enterprise SSO
     │   └── api/
     │       ├── admin/[...path]/      Company-scoped proxy for the ThunderID management API

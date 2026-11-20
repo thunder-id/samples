@@ -397,6 +397,9 @@ nodes:
 #   none cannot use enterprise SSO.
 # - Registering calls the company sign-up flow, then finishes sign-in, so the new admin lands in the
 #   app signed in.
+# - An enterprise sign-in whose email matches an account the user already has, such as the admin who
+#   registered the company with a username and password, links to that account once the user signs in
+#   to it with its password. Later enterprise sign-ins use the account directly.
 resource_type: flow
 id: 019f0a10-0000-7000-8000-000000000021
 projectId: 01900000-0000-7000-8000-000000000002
@@ -590,7 +593,126 @@ nodes:
   properties:
     idpId: "{{var(enterpriseIdp)}}"
     allowAuthenticationWithoutLocalUser: true
+  onSuccess: account_linking
+# A first enterprise sign-in has no recorded link. When its email matches an existing account, this
+# asks the user to prove they own that account before linking it, instead of provisioning a duplicate.
+# An identity already linked, or one that matches no account, passes straight through.
+- id: account_linking
+  type: TASK_EXECUTION
+  executor:
+    name: AccountLinkingExecutor
   onSuccess: provision_member
+  onIncomplete: prompt_link_account
+- id: prompt_link_account
+  type: PROMPT
+  meta:
+    components:
+    - alt: Wayfinder Enterprise
+      category: DISPLAY
+      id: image_logo_link
+      resourceType: ELEMENT
+      src: '{{ meta(application.logoUrl) }}'
+      type: IMAGE
+      height: '48'
+      width: ''
+    - align: center
+      type: TEXT
+      id: heading_link
+      label: You already have a Wayfinder account
+      variant: HEADING_1
+    - align: center
+      type: TEXT
+      id: text_link
+      label: Your identity provider signed you in with these details, which match an account you already have. Sign in to that account once to link it, and use enterprise SSO with it from now on.
+      variant: BODY_1
+    - category: DISPLAY
+      id: list_link_details
+      resourceType: ELEMENT
+      type: KEY_VALUE_LIST
+      source: linkingPromptDetails
+    - type: BLOCK
+      id: block_link
+      components:
+      - type: ACTION
+        id: action_link_account
+        label: Link my account
+        variant: PRIMARY
+        eventType: SUBMIT
+    # Starts a new sign-in from the app instead of going back within this one: this sign-in has
+    # already chosen the company and holds the pending link, which the sign-in options would inherit.
+    - category: DISPLAY
+      id: rich_text_link_back_signin
+      label: <p class="rich-text-paragraph"><a href="{{ meta(application.url) }}/?signin" class="rich-text-link"><span class="rich-text-pre-wrap">Back to sign in</span></a></p>
+      resourceType: ELEMENT
+      type: RICH_TEXT
+  prompts:
+  - action:
+      ref: action_link_account
+      type: CONFIRM
+      nextNode: prompt_link_password
+# The verification: the account's own username and password. Every path from here returns to
+# account_linking, which links the identity only to the account that signed in here.
+- id: prompt_link_password
+  type: PROMPT
+  meta:
+    components:
+    - alt: Wayfinder Enterprise
+      category: DISPLAY
+      id: image_logo_link_password
+      resourceType: ELEMENT
+      src: '{{ meta(application.logoUrl) }}'
+      type: IMAGE
+      height: '48'
+      width: ''
+    - align: center
+      type: TEXT
+      id: heading_link_password
+      label: Sign in to link your account
+      variant: HEADING_1
+    - align: center
+      type: TEXT
+      id: text_link_password
+      label: Enter the username and password of your Wayfinder account.
+      variant: BODY_1
+    - type: BLOCK
+      id: block_link_password
+      components:
+      - id: input_link_username
+        ref: username
+        type: TEXT_INPUT
+        label: '{{ t(signin:forms.credentials.fields.username.label) }}'
+        required: true
+        placeholder: '{{ t(signin:forms.credentials.fields.username.placeholder) }}'
+      - id: input_link_password
+        ref: password
+        type: PASSWORD_INPUT
+        label: '{{ t(signin:forms.credentials.fields.password.label) }}'
+        required: true
+        placeholder: '{{ t(signin:forms.credentials.fields.password.placeholder) }}'
+      - type: ACTION
+        id: action_link_password
+        label: Sign in and link
+        variant: PRIMARY
+        eventType: SUBMIT
+  prompts:
+  - inputs:
+    - ref: input_link_username
+      identifier: username
+      type: TEXT_INPUT
+      required: true
+    - ref: input_link_password
+      identifier: password
+      type: PASSWORD_INPUT
+      required: true
+    action:
+      ref: action_link_password
+      nextNode: verify_link_password
+- id: verify_link_password
+  type: TASK_EXECUTION
+  executor:
+    name: CredentialsAuthExecutor
+  onSuccess: account_linking
+  onIncomplete: prompt_link_password
 - id: provision_member
   type: TASK_EXECUTION
   condition:
