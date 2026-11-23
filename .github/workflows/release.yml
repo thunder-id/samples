@@ -1,7 +1,8 @@
 # Entrypoint workflow for releasing sample apps.
 # Each selected sample is released independently: its version is bumped in its
 # native manifest (package.json, pubspec.yaml, build.gradle.kts, project.pbxproj),
-# committed, tagged, packed into a source zip and attached to a GitHub Release.
+# committed with a new CHANGELOG.md entry, tagged, packed into a source zip and attached to a
+# GitHub Release whose notes list the pull requests that changed the sample.
 # Sample jobs run up to four at a time; push conflicts are handled by a retry-with-rebase
 # loop in the commit step.
 
@@ -225,6 +226,8 @@ jobs:
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           token: ${{ secrets.THUNDERID_AUTOMATION_BOT }}
+          # Full history and tags, so the release notes can find the sample's previous tag.
+          fetch-depth: 0
 
       - name: 🏷️ Bump Version
         id: bump
@@ -233,13 +236,24 @@ jobs:
           path: ${{ matrix.sample.path }}
           bump_type: ${{ github.event.inputs.bump_type }}
 
+      # The pull requests that changed the sample since its previous tag, grouped by their `Type/*`
+      # label (.github/release.yml, enforced by pr-label-check.yml), in the same format as the
+      # thunder-id/thunderid releases. The same notes go to the top of the sample's CHANGELOG.md.
+      - name: 📝 Generate Release Notes & CHANGELOG
+        id: notes
+        uses: ./.github/actions/release-notes
+        with:
+          path: ${{ matrix.sample.path }}
+          version: ${{ steps.bump.outputs.version }}
+          token: ${{ secrets.THUNDERID_AUTOMATION_BOT }}
+
       - name: 📤 Commit, Tag & Push
         env:
           VERSION: ${{ steps.bump.outputs.version }}
         run: |
           git config user.name "${{ env.RELEASE_GIT_USER_NAME }}"
           git config user.email "${{ env.RELEASE_GIT_USER_EMAIL }}"
-          git add "${{ steps.bump.outputs.manifest }}"
+          git add "${{ steps.bump.outputs.manifest }}" "${{ steps.notes.outputs.changelog }}"
           # `npm version` also bumps the version recorded in package-lock.json.
           if [ -f "${SAMPLE_PATH}/package-lock.json" ]; then git add "${SAMPLE_PATH}/package-lock.json"; fi
           git diff --cached --quiet || git commit -m "[Release] ${SAMPLE_PATH}@${VERSION}"
@@ -270,5 +284,5 @@ jobs:
         run: |
           gh release create "sample/${SAMPLE_PATH}/v${VERSION}" \
             --title "${TITLE} v${VERSION}" \
-            --generate-notes \
+            --notes-file "${{ steps.notes.outputs.notes }}" \
             "${{ steps.pack.outputs.archive }}"

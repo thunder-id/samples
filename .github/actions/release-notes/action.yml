@@ -1,0 +1,43 @@
+name: Sample Release Notes
+description: >
+  Writes the release notes for a sample and adds them to the top of the sample's
+  CHANGELOG.md. The notes list the pull requests that changed the sample since its
+  previous tag, grouped by their Type/* label (.github/release.yml), in the same
+  format as the thunder-id/thunderid releases. Run it after the version bump and
+  before the release commit, so the commit carries the CHANGELOG. Needs the tags
+  in the clone (fetch-depth 0).
+
+inputs:
+  path:
+    description: Sample app directory, relative to the repo root (e.g. self-care/account)
+    required: true
+  version:
+    description: Version being released (e.g. 1.2.3)
+    required: true
+  token:
+    description: Token used to generate the notes and read the pull requests
+    required: true
+
+outputs:
+  notes:
+    description: Path of the release notes file, for `gh release create --notes-file`
+    value: ${{ steps.notes.outputs.notes }}
+  changelog:
+    description: Path of the updated CHANGELOG.md (relative to the workspace root), for staging
+    value: ${{ steps.notes.outputs.changelog }}
+
+runs:
+  using: composite
+  steps:
+    - name: Generate
+      id: notes
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+        SAMPLE_PATH: ${{ inputs.path }}
+        VERSION: ${{ inputs.version }}
+      run: |
+        notes="$RUNNER_TEMP/release-notes.md"
+        node "$GITHUB_ACTION_PATH/release-notes.mjs" "$SAMPLE_PATH" "$VERSION" "$notes"
+        echo "notes=$notes" >> "$GITHUB_OUTPUT"
+        echo "changelog=${SAMPLE_PATH%/}/CHANGELOG.md" >> "$GITHUB_OUTPUT"
