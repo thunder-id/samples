@@ -170,8 +170,15 @@ const handle = async (request: Request, { params }: Params): Promise<Response> =
       return callManagementApi(user.ouId, 'GET', 'connections', query);
     }
     if (method === 'POST' && id === 'oidc' && subPath === '') {
+      // Matches a first enterprise sign-in to an existing account on email, so the sign-in flow can link
+      // the two once the user signs in to that account, instead of creating a duplicate.
       const connection = await readJson(request);
-      return callManagementApi(user.ouId, 'POST', 'connections/oidc', undefined, { ...connection, ouId: user.ouId });
+      const attributeConfiguration = connection.attributeConfiguration as Record<string, unknown> | undefined;
+      return callManagementApi(user.ouId, 'POST', 'connections/oidc', undefined, {
+        ...connection,
+        attributeConfiguration: { ...attributeConfiguration, accountLinking: { attributes: ['email'] } },
+        ouId: user.ouId,
+      });
     }
     return notFound();
   }

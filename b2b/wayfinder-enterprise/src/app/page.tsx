@@ -3,6 +3,7 @@
 
 import { redirect } from 'next/navigation';
 import SignInAction from '@/components/SignInAction';
+import SignInOnLoad from '@/components/SignInOnLoad';
 import { getSessionUser } from '@/lib/auth';
 
 const SECTIONS = [
@@ -25,6 +26,7 @@ export default async function LandingPage() {
 
   return (
     <div className="public-shell" id="top">
+      <SignInOnLoad />
       <header className="public-topbar">
         <Brand />
         <nav className="public-nav-links" aria-label="Landing page sections">
@@ -35,8 +37,7 @@ export default async function LandingPage() {
           ))}
         </nav>
         <div className="landing-actions">
-          <SignInAction variant="secondary">Get started</SignInAction>
-          <SignInAction variant="primary">Sign in</SignInAction>
+          <SignInAction variant="primary">Get started</SignInAction>
         </div>
       </header>
 
@@ -51,7 +52,6 @@ export default async function LandingPage() {
             </p>
             <div className="landing-actions">
               <SignInAction variant="primary">Get started</SignInAction>
-              <SignInAction variant="secondary">Sign in</SignInAction>
             </div>
             <div className="hero-proof" aria-label="Platform highlights">
               <span>Multi-workspace controls</span>
@@ -91,7 +91,7 @@ export default async function LandingPage() {
             </div>
             <div className="flight-list-preview">
               <div>
-                <span>WSO2 APAC</span>
+                <span>Acme Corp</span>
                 <strong>12 travelers</strong>
                 <em>Approved</em>
               </div>
@@ -214,8 +214,7 @@ export default async function LandingPage() {
               <h2>Make corporate travel feel coordinated before the itinerary is even booked.</h2>
             </div>
             <div className="landing-actions">
-              <SignInAction variant="primary">Create workspace</SignInAction>
-              <SignInAction variant="secondary">Sign in</SignInAction>
+              <SignInAction variant="primary">Get started</SignInAction>
             </div>
           </div>
         </section>

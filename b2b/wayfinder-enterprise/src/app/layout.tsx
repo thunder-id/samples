@@ -32,11 +32,27 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           signInOptions={{ resource: apiResource }}
           preferences={{
             user: { fetchUserProfile: false },
-            // The ThunderID components use the app's own font, blue and corner radius.
+            // The ThunderID components use the app's own palette, font, corner radius and shadows from
+            // globals.css. The app has no dark mode, so the components stay light too.
             theme: {
+              mode: 'light',
               overrides: {
-                borderRadius: { large: '12px', medium: '8px', small: '6px' },
-                colors: { primary: { contrastText: '#ffffff', dark: '#1e3a8a', main: '#1d4ed8' } },
+                borderRadius: { large: '14px', medium: '8px', small: '6px' },
+                colors: {
+                  background: { body: { main: '#f6f8fb' }, surface: '#ffffff' },
+                  border: '#dbe3ee',
+                  error: { contrastText: '#ffffff', light: '#fff5f5', main: '#b91c1c' },
+                  info: { contrastText: '#ffffff', light: '#e8efff', main: '#1d4ed8' },
+                  primary: { contrastText: '#ffffff', dark: '#1e40af', main: '#1d4ed8' },
+                  success: { contrastText: '#ffffff', light: '#eefbf4', main: '#047857' },
+                  text: { primary: '#0f172a', secondary: '#64748b' },
+                  warning: { contrastText: '#ffffff', light: '#fff8eb', main: '#a15c07' },
+                },
+                shadows: {
+                  large: '0 1px 2px rgba(15, 23, 42, 0.04), 0 12px 32px rgba(15, 23, 42, 0.06)',
+                  medium: '0 10px 28px rgba(15, 23, 42, 0.05)',
+                  small: '0 1px 2px rgba(15, 23, 42, 0.04)',
+                },
                 typography: { fontFamily: inter.style.fontFamily },
               },
             },

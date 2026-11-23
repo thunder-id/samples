@@ -14,7 +14,7 @@ interface SignInActionProps {
 /**
  * Starts sign-in at ThunderID. Its sign-in page offers a password, enterprise SSO, or registering a
  * company. Registering runs the app's sign-up flow inside the sign-in, so the new admin comes back to
- * the app already signed in. Every landing page action uses this, whatever its label.
+ * the app already signed in, so the landing page offers this one action for both.
  */
 export default function SignInAction({ children, variant }: SignInActionProps) {
   return (
