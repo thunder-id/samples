@@ -1,7 +1,7 @@
 {
   "name": "@thunderid/wayfinder-enterprise-nextjs-sample",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "B2B travel management sample: company sign-up, roles, and per-company enterprise SSO with ThunderID.",
   "license": "Apache-2.0",
   "type": "module",
