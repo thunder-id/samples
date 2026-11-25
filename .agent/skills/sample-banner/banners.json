@@ -10,7 +10,7 @@
   },
   "samples": [
     {
-      "path": "quickstarts/android",
+      "path": "quickstarts/quickstart-android",
       "alt": "ThunderID Android Quickstart",
       "badge": "QUICKSTART",
       "logo": "android",
@@ -19,7 +19,7 @@
       "desc": "A Jetpack Compose app that signs users in with the ThunderID Android SDK and shows their profile."
     },
     {
-      "path": "quickstarts/browser",
+      "path": "quickstarts/quickstart-browser",
       "alt": "ThunderID Browser Quickstart",
       "badge": "QUICKSTART",
       "logo": "browser",
@@ -28,7 +28,7 @@
       "desc": "A framework-free JavaScript app that signs users in with @thunderid/browser."
     },
     {
-      "path": "quickstarts/express",
+      "path": "quickstarts/quickstart-express",
       "alt": "ThunderID Express Quickstart",
       "badge": "QUICKSTART",
       "logo": "express",
@@ -37,7 +37,7 @@
       "desc": "An Express server that signs users in with @thunderid/express and protects its routes."
     },
     {
-      "path": "quickstarts/flutter",
+      "path": "quickstarts/quickstart-flutter",
       "alt": "ThunderID Flutter Quickstart",
       "badge": "QUICKSTART",
       "logo": "flutter",
@@ -46,7 +46,7 @@
       "desc": "A Flutter app for iOS and Android that signs users in with the thunderid_flutter package."
     },
     {
-      "path": "quickstarts/ios",
+      "path": "quickstarts/quickstart-ios",
       "alt": "ThunderID iOS Quickstart",
       "badge": "QUICKSTART",
       "logo": "ios",
@@ -55,7 +55,7 @@
       "desc": "A SwiftUI app that signs users in with the ThunderID iOS SDK and shows their profile."
     },
     {
-      "path": "quickstarts/nextjs",
+      "path": "quickstarts/quickstart-nextjs",
       "alt": "ThunderID Next.js Quickstart",
       "badge": "QUICKSTART",
       "logo": "nextjs",
@@ -64,7 +64,7 @@
       "desc": "A Next.js App Router app that signs users in with @thunderid/nextjs, on the client and the server."
     },
     {
-      "path": "quickstarts/nextjs-b2b",
+      "path": "quickstarts/quickstart-nextjs-b2b",
       "alt": "ThunderID Next.js B2B Quickstart",
       "badge": "QUICKSTART",
       "logo": "nextjs",
@@ -73,7 +73,7 @@
       "desc": "A Next.js app where companies sign up as organizations, switch between them and plug in their own identity provider with @thunderid/nextjs."
     },
     {
-      "path": "quickstarts/node",
+      "path": "quickstarts/quickstart-node",
       "alt": "ThunderID Node.js Quickstart",
       "badge": "QUICKSTART",
       "logo": "node",
@@ -82,7 +82,7 @@
       "desc": "A Node.js service that gets its own access token with @thunderid/node for machine-to-machine calls."
     },
     {
-      "path": "quickstarts/nuxt",
+      "path": "quickstarts/quickstart-nuxt",
       "alt": "ThunderID Nuxt Quickstart",
       "badge": "QUICKSTART",
       "logo": "nuxt",
@@ -91,7 +91,7 @@
       "desc": "A Nuxt app that signs users in with @thunderid/nuxt, with server-side sessions."
     },
     {
-      "path": "quickstarts/react",
+      "path": "quickstarts/quickstart-react",
       "alt": "ThunderID React Quickstart",
       "badge": "QUICKSTART",
       "logo": "react",
@@ -100,7 +100,7 @@
       "desc": "A React and Vite app that signs users in with @thunderid/react and shows their profile and tokens."
     },
     {
-      "path": "quickstarts/react-b2b",
+      "path": "quickstarts/quickstart-react-b2b",
       "alt": "ThunderID React B2B Quickstart",
       "badge": "QUICKSTART",
       "logo": "react",
@@ -109,7 +109,7 @@
       "desc": "A React app where companies sign up as organizations, switch between them and plug in their own identity provider with @thunderid/react."
     },
     {
-      "path": "quickstarts/vue",
+      "path": "quickstarts/quickstart-vue",
       "alt": "ThunderID Vue Quickstart",
       "badge": "QUICKSTART",
       "logo": "vue",
@@ -127,7 +127,7 @@
       "desc": "Sign in to a Next.js app through Better Auth's Generic OAuth plugin and the @thunderid/better-auth helper."
     },
     {
-      "path": "integrations/flutter-app-auth",
+      "path": "integrations/app-auth-flutter",
       "alt": "ThunderID Flutter AppAuth Sample",
       "badge": "INTEGRATION",
       "logo": "flutter",
@@ -136,7 +136,7 @@
       "desc": "Sign in to a Flutter app with the flutter_appauth plugin, using authorization code and PKCE."
     },
     {
-      "path": "patterns/react-express-bff",
+      "path": "patterns/bff-react-express",
       "alt": "ThunderID React Express BFF Sample",
       "badge": "PATTERN",
       "logo": "react",
@@ -145,16 +145,16 @@
       "desc": "A React app that signs in through an Express BFF, which keeps tokens on the server with @thunderid/express and handles back-channel logout."
     },
     {
-      "path": "self-care/account",
-      "alt": "ThunderID Account Sample",
-      "badge": "SELF-CARE SAMPLE",
+      "path": "self-service/myaccount-react",
+      "alt": "ThunderID My Account Sample",
+      "badge": "SELF-SERVICE SAMPLE",
       "logo": "react",
-      "title": "Account <accent>App</accent>",
+      "title": "My Account <accent>App</accent>",
       "accent": "#2DD4BF",
       "desc": "A React app where users view and edit their own profile and change their password."
     },
     {
-      "path": "management/admin",
+      "path": "management/admin-react",
       "alt": "ThunderID Admin Sample",
       "badge": "MANAGEMENT SAMPLE",
       "logo": "react",
@@ -163,7 +163,7 @@
       "desc": "A React app where an administrator manages users, groups, roles, applications and agents with @thunderid/react."
     },
     {
-      "path": "b2b/wayfinder-enterprise",
+      "path": "b2b/wayfinder-enterprise-nextjs",
       "alt": "ThunderID Wayfinder Enterprise Sample",
       "badge": "B2B SAMPLE",
       "logo": "nextjs",

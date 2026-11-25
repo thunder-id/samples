@@ -7,7 +7,7 @@ description: >
 
 inputs:
   path:
-    description: Sample app directory, relative to the repo root (e.g. self-care/account)
+    description: Sample app directory, relative to the repo root (e.g. self-service/myaccount-react)
     required: true
   version:
     description: Version being released (e.g. 1.2.3), used to name the zip file
@@ -28,8 +28,9 @@ runs:
         SAMPLE_PATH="${{ inputs.path }}"
         VERSION="${{ inputs.version }}"
         SAMPLE_PATH="${SAMPLE_PATH%/}"
-        # self-care/account -> self-care-account
-        SLUG=$(echo "${SAMPLE_PATH}" | tr '/' '-')
+        # self-service/myaccount-react -> myaccount-react. Sample folder names are unique across
+        # areas, so the folder alone names the zip.
+        SLUG="${SAMPLE_PATH##*/}"
         FOLDER="thunderid-${SLUG}-sample-v${VERSION}"
         ARCHIVE="${FOLDER}.zip"
 

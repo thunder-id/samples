@@ -10,18 +10,18 @@ The minimal app per platform that the [ThunderID docs](https://thunderid.dev) qu
 
 | Sample | Release | Description |
 |---|---|---|
-| [`android`](quickstarts/android) | [![release](https://img.shields.io/github/v/release/thunder-id/samples?filter=sample/quickstarts/android/*)](https://github.com/thunder-id/samples/releases?q=sample%2Fquickstarts%2Fandroid&expanded=true) | Android (Jetpack Compose) app using the [ThunderID Android SDK](https://github.com/thunder-id/android-sdks) |
-| [`browser`](quickstarts/browser) | [![release](https://img.shields.io/github/v/release/thunder-id/samples?filter=sample/quickstarts/browser/*)](https://github.com/thunder-id/samples/releases?q=sample%2Fquickstarts%2Fbrowser&expanded=true) | Framework-free JavaScript app using `@thunderid/browser` |
-| [`express`](quickstarts/express) | [![release](https://img.shields.io/github/v/release/thunder-id/samples?filter=sample/quickstarts/express/*)](https://github.com/thunder-id/samples/releases?q=sample%2Fquickstarts%2Fexpress&expanded=true) | Express server app using `@thunderid/express` |
-| [`flutter`](quickstarts/flutter) | [![release](https://img.shields.io/github/v/release/thunder-id/samples?filter=sample/quickstarts/flutter/*)](https://github.com/thunder-id/samples/releases?q=sample%2Fquickstarts%2Fflutter&expanded=true) | Flutter app using the [`thunderid_flutter`](https://pub.dev/packages/thunderid_flutter) package |
-| [`ios`](quickstarts/ios) | [![release](https://img.shields.io/github/v/release/thunder-id/samples?filter=sample/quickstarts/ios/*)](https://github.com/thunder-id/samples/releases?q=sample%2Fquickstarts%2Fios&expanded=true) | iOS (SwiftUI) app using the [ThunderID iOS SDK](https://github.com/thunder-id/ios-sdks) |
-| [`nextjs`](quickstarts/nextjs) | [![release](https://img.shields.io/github/v/release/thunder-id/samples?filter=sample/quickstarts/nextjs/*)](https://github.com/thunder-id/samples/releases?q=sample%2Fquickstarts%2Fnextjs&expanded=true) | Next.js app using `@thunderid/nextjs` |
-| [`nextjs-b2b`](quickstarts/nextjs-b2b) | [![release](https://img.shields.io/github/v/release/thunder-id/samples?filter=sample/quickstarts/nextjs-b2b/*)](https://github.com/thunder-id/samples/releases?q=sample%2Fquickstarts%2Fnextjs-b2b&expanded=true) | B2B Next.js app using `@thunderid/nextjs` |
-| [`node`](quickstarts/node) | [![release](https://img.shields.io/github/v/release/thunder-id/samples?filter=sample/quickstarts/node/*)](https://github.com/thunder-id/samples/releases?q=sample%2Fquickstarts%2Fnode&expanded=true) | Node.js service using `@thunderid/node` for machine-to-machine access |
-| [`nuxt`](quickstarts/nuxt) | [![release](https://img.shields.io/github/v/release/thunder-id/samples?filter=sample/quickstarts/nuxt/*)](https://github.com/thunder-id/samples/releases?q=sample%2Fquickstarts%2Fnuxt&expanded=true) | Nuxt app using `@thunderid/nuxt` |
-| [`react`](quickstarts/react) | [![release](https://img.shields.io/github/v/release/thunder-id/samples?filter=sample/quickstarts/react/*)](https://github.com/thunder-id/samples/releases?q=sample%2Fquickstarts%2Freact&expanded=true) | React app using `@thunderid/react` |
-| [`react-b2b`](quickstarts/react-b2b) | [![release](https://img.shields.io/github/v/release/thunder-id/samples?filter=sample/quickstarts/react-b2b/*)](https://github.com/thunder-id/samples/releases?q=sample%2Fquickstarts%2Freact-b2b&expanded=true) | B2B React app using `@thunderid/react` |
-| [`vue`](quickstarts/vue) | [![release](https://img.shields.io/github/v/release/thunder-id/samples?filter=sample/quickstarts/vue/*)](https://github.com/thunder-id/samples/releases?q=sample%2Fquickstarts%2Fvue&expanded=true) | Vue app using `@thunderid/vue` |
+| [`quickstart-android`](quickstarts/quickstart-android) | [![release](https://img.shields.io/github/v/release/thunder-id/samples?filter=sample/quickstarts/quickstart-android/*)](https://github.com/thunder-id/samples/releases?q=sample%2Fquickstarts%2Fquickstart-android&expanded=true) | Android (Jetpack Compose) app using the [ThunderID Android SDK](https://github.com/thunder-id/android-sdks) |
+| [`quickstart-browser`](quickstarts/quickstart-browser) | [![release](https://img.shields.io/github/v/release/thunder-id/samples?filter=sample/quickstarts/quickstart-browser/*)](https://github.com/thunder-id/samples/releases?q=sample%2Fquickstarts%2Fquickstart-browser&expanded=true) | Framework-free JavaScript app using `@thunderid/browser` |
+| [`quickstart-express`](quickstarts/quickstart-express) | [![release](https://img.shields.io/github/v/release/thunder-id/samples?filter=sample/quickstarts/quickstart-express/*)](https://github.com/thunder-id/samples/releases?q=sample%2Fquickstarts%2Fquickstart-express&expanded=true) | Express server app using `@thunderid/express` |
+| [`quickstart-flutter`](quickstarts/quickstart-flutter) | [![release](https://img.shields.io/github/v/release/thunder-id/samples?filter=sample/quickstarts/quickstart-flutter/*)](https://github.com/thunder-id/samples/releases?q=sample%2Fquickstarts%2Fquickstart-flutter&expanded=true) | Flutter app using the [`thunderid_flutter`](https://pub.dev/packages/thunderid_flutter) package |
+| [`quickstart-ios`](quickstarts/quickstart-ios) | [![release](https://img.shields.io/github/v/release/thunder-id/samples?filter=sample/quickstarts/quickstart-ios/*)](https://github.com/thunder-id/samples/releases?q=sample%2Fquickstarts%2Fquickstart-ios&expanded=true) | iOS (SwiftUI) app using the [ThunderID iOS SDK](https://github.com/thunder-id/ios-sdks) |
+| [`quickstart-nextjs`](quickstarts/quickstart-nextjs) | [![release](https://img.shields.io/github/v/release/thunder-id/samples?filter=sample/quickstarts/quickstart-nextjs/*)](https://github.com/thunder-id/samples/releases?q=sample%2Fquickstarts%2Fquickstart-nextjs&expanded=true) | Next.js app using `@thunderid/nextjs` |
+| [`quickstart-nextjs-b2b`](quickstarts/quickstart-nextjs-b2b) | [![release](https://img.shields.io/github/v/release/thunder-id/samples?filter=sample/quickstarts/quickstart-nextjs-b2b/*)](https://github.com/thunder-id/samples/releases?q=sample%2Fquickstarts%2Fquickstart-nextjs-b2b&expanded=true) | B2B Next.js app using `@thunderid/nextjs` |
+| [`quickstart-node`](quickstarts/quickstart-node) | [![release](https://img.shields.io/github/v/release/thunder-id/samples?filter=sample/quickstarts/quickstart-node/*)](https://github.com/thunder-id/samples/releases?q=sample%2Fquickstarts%2Fquickstart-node&expanded=true) | Node.js service using `@thunderid/node` for machine-to-machine access |
+| [`quickstart-nuxt`](quickstarts/quickstart-nuxt) | [![release](https://img.shields.io/github/v/release/thunder-id/samples?filter=sample/quickstarts/quickstart-nuxt/*)](https://github.com/thunder-id/samples/releases?q=sample%2Fquickstarts%2Fquickstart-nuxt&expanded=true) | Nuxt app using `@thunderid/nuxt` |
+| [`quickstart-react`](quickstarts/quickstart-react) | [![release](https://img.shields.io/github/v/release/thunder-id/samples?filter=sample/quickstarts/quickstart-react/*)](https://github.com/thunder-id/samples/releases?q=sample%2Fquickstarts%2Fquickstart-react&expanded=true) | React app using `@thunderid/react` |
+| [`quickstart-react-b2b`](quickstarts/quickstart-react-b2b) | [![release](https://img.shields.io/github/v/release/thunder-id/samples?filter=sample/quickstarts/quickstart-react-b2b/*)](https://github.com/thunder-id/samples/releases?q=sample%2Fquickstarts%2Fquickstart-react-b2b&expanded=true) | B2B React app using `@thunderid/react` |
+| [`quickstart-vue`](quickstarts/quickstart-vue) | [![release](https://img.shields.io/github/v/release/thunder-id/samples?filter=sample/quickstarts/quickstart-vue/*)](https://github.com/thunder-id/samples/releases?q=sample%2Fquickstarts%2Fquickstart-vue&expanded=true) | Vue app using `@thunderid/vue` |
 
 ### Integrations
 
@@ -29,8 +29,8 @@ ThunderID used through a third-party library.
 
 | Sample | Release | Description |
 |---|---|---|
+| [`app-auth-flutter`](integrations/app-auth-flutter) | [![release](https://img.shields.io/github/v/release/thunder-id/samples?filter=sample/integrations/app-auth-flutter/*)](https://github.com/thunder-id/samples/releases?q=sample%2Fintegrations%2Fapp-auth-flutter&expanded=true) | Flutter sign-in with the `flutter_appauth` plugin |
 | [`better-auth-nextjs`](integrations/better-auth-nextjs) | [![release](https://img.shields.io/github/v/release/thunder-id/samples?filter=sample/integrations/better-auth-nextjs/*)](https://github.com/thunder-id/samples/releases?q=sample%2Fintegrations%2Fbetter-auth-nextjs&expanded=true) | Next.js sign-in with [Better Auth](https://better-auth.com) and the `@thunderid/better-auth` provider helper |
-| [`flutter-app-auth`](integrations/flutter-app-auth) | [![release](https://img.shields.io/github/v/release/thunder-id/samples?filter=sample/integrations/flutter-app-auth/*)](https://github.com/thunder-id/samples/releases?q=sample%2Fintegrations%2Fflutter-app-auth&expanded=true) | Flutter sign-in with the `flutter_appauth` plugin |
 
 ### Patterns
 
@@ -38,15 +38,15 @@ Architectures that span more than one app.
 
 | Sample | Release | Description |
 |---|---|---|
-| [`react-express-bff`](patterns/react-express-bff) | [![release](https://img.shields.io/github/v/release/thunder-id/samples?filter=sample/patterns/react-express-bff/*)](https://github.com/thunder-id/samples/releases?q=sample%2Fpatterns%2Freact-express-bff&expanded=true) | React app that signs in through an Express Backend for Frontend, with back-channel logout |
+| [`bff-react-express`](patterns/bff-react-express) | [![release](https://img.shields.io/github/v/release/thunder-id/samples?filter=sample/patterns/bff-react-express/*)](https://github.com/thunder-id/samples/releases?q=sample%2Fpatterns%2Fbff-react-express&expanded=true) | React app that signs in through an Express Backend for Frontend, with back-channel logout |
 
-### Self-care
+### Self-service
 
-Apps built on ThunderID's self-service features.
+Apps where a signed-in user manages their own account.
 
 | Sample | Release | Description |
 |---|---|---|
-| [`account`](self-care/account) | [![release](https://img.shields.io/github/v/release/thunder-id/samples?filter=sample/self-care/account/*)](https://github.com/thunder-id/samples/releases?q=sample%2Fself-care%2Faccount&expanded=true) | React account app for viewing and editing a profile and changing a password |
+| [`myaccount-react`](self-service/myaccount-react) | [![release](https://img.shields.io/github/v/release/thunder-id/samples?filter=sample/self-service/myaccount-react/*)](https://github.com/thunder-id/samples/releases?q=sample%2Fself-service%2Fmyaccount-react&expanded=true) | React account app for viewing and editing a profile and changing a password |
 
 ### Management
 
@@ -54,7 +54,7 @@ Apps where an administrator manages an organization's ThunderID resources.
 
 | Sample | Release | Description |
 |---|---|---|
-| [`admin`](management/admin) | [![release](https://img.shields.io/github/v/release/thunder-id/samples?filter=sample/management/admin/*)](https://github.com/thunder-id/samples/releases?q=sample%2Fmanagement%2Fadmin&expanded=true) | React admin app for managing users, groups, roles, applications, agents, flows, projects and organization units |
+| [`admin-react`](management/admin-react) | [![release](https://img.shields.io/github/v/release/thunder-id/samples?filter=sample/management/admin-react/*)](https://github.com/thunder-id/samples/releases?q=sample%2Fmanagement%2Fadmin-react&expanded=true) | React admin app for managing users, groups, roles, applications, agents, flows, projects and organization units |
 
 ### B2B
 
@@ -62,7 +62,7 @@ Apps that serve many business customers, each one an organization of its own.
 
 | Sample | Release | Description |
 |---|---|---|
-| [`wayfinder-enterprise`](b2b/wayfinder-enterprise) | [![release](https://img.shields.io/github/v/release/thunder-id/samples?filter=sample/b2b/wayfinder-enterprise/*)](https://github.com/thunder-id/samples/releases?q=sample%2Fb2b%2Fwayfinder-enterprise&expanded=true) | Next.js travel management app where companies sign up as organizations, manage their team and plug in their own identity provider |
+| [`wayfinder-enterprise-nextjs`](b2b/wayfinder-enterprise-nextjs) | [![release](https://img.shields.io/github/v/release/thunder-id/samples?filter=sample/b2b/wayfinder-enterprise-nextjs/*)](https://github.com/thunder-id/samples/releases?q=sample%2Fb2b%2Fwayfinder-enterprise-nextjs&expanded=true) | Next.js travel management app where companies sign up as organizations, manage their team and plug in their own identity provider |
 
 ## Contributing
 

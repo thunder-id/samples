@@ -80,7 +80,7 @@ const sampleBanner = s => {
   </div>`;
 };
 
-const fileFor = s => `${s.path.replace('/', '-')}.png`;
+const fileFor = s => `${path.basename(s.path)}.png`;
 
 async function main() {
   const args = process.argv.slice(2);
