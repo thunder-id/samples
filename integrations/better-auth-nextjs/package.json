@@ -1,7 +1,7 @@
 {
   "name": "@thunderid/better-auth-nextjs-sample",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.0.1",
   "scripts": {
     "prepare-dev": "node scripts/prepare-dev.cjs",
     "dev": "next dev",
