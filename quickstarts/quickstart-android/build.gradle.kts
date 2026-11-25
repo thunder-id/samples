@@ -13,8 +13,8 @@ android {
         applicationId = "dev.thunderid.Quickstart"
         minSdk = 26
         targetSdk = 34
-        versionCode = 3
-        versionName = "1.0.0"
+        versionCode = 4
+        versionName = "1.0.1"
 
         // Load ThunderID config from config.properties (gitignored).
         // Copy config.properties.example to config.properties and fill in your values.
