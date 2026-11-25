@@ -7,7 +7,7 @@ description: >
 
 inputs:
   path:
-    description: Sample app directory, relative to the repo root (e.g. self-care/account)
+    description: Sample app directory, relative to the repo root (e.g. self-service/myaccount-react)
     required: true
   bump_type:
     description: Version bump type (patch, minor or major)

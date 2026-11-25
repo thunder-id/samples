@@ -1,4 +1,4 @@
-![ThunderID Better Auth Sample](https://raw.githubusercontent.com/thunder-id/samples/main/.github/assets/banners/integrations-better-auth-nextjs.png)
+![ThunderID Better Auth Sample](https://raw.githubusercontent.com/thunder-id/samples/main/.github/assets/banners/better-auth-nextjs.png)
 
 # ThunderID Better Auth Sample
 

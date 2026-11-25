@@ -27,110 +27,110 @@ on:
         type: boolean
         default: false
 
-      sample_quickstarts_android:
-        description: 'quickstarts/android'
+      sample_quickstarts_quickstart_android:
+        description: 'quickstarts/quickstart-android'
         required: false
         type: boolean
         default: false
 
-      sample_quickstarts_browser:
-        description: 'quickstarts/browser'
+      sample_quickstarts_quickstart_browser:
+        description: 'quickstarts/quickstart-browser'
         required: false
         type: boolean
         default: false
 
-      sample_quickstarts_express:
-        description: 'quickstarts/express'
+      sample_quickstarts_quickstart_express:
+        description: 'quickstarts/quickstart-express'
         required: false
         type: boolean
         default: false
 
-      sample_quickstarts_flutter:
-        description: 'quickstarts/flutter'
+      sample_quickstarts_quickstart_flutter:
+        description: 'quickstarts/quickstart-flutter'
         required: false
         type: boolean
         default: false
 
-      sample_quickstarts_ios:
-        description: 'quickstarts/ios'
+      sample_quickstarts_quickstart_ios:
+        description: 'quickstarts/quickstart-ios'
         required: false
         type: boolean
         default: false
 
-      sample_quickstarts_nextjs:
-        description: 'quickstarts/nextjs'
+      sample_quickstarts_quickstart_nextjs:
+        description: 'quickstarts/quickstart-nextjs'
         required: false
         type: boolean
         default: false
 
-      sample_quickstarts_nextjs_b2b:
-        description: 'quickstarts/nextjs-b2b'
+      sample_quickstarts_quickstart_nextjs_b2b:
+        description: 'quickstarts/quickstart-nextjs-b2b'
         required: false
         type: boolean
         default: false
 
-      sample_quickstarts_node:
-        description: 'quickstarts/node'
+      sample_quickstarts_quickstart_node:
+        description: 'quickstarts/quickstart-node'
         required: false
         type: boolean
         default: false
 
-      sample_quickstarts_nuxt:
-        description: 'quickstarts/nuxt'
+      sample_quickstarts_quickstart_nuxt:
+        description: 'quickstarts/quickstart-nuxt'
         required: false
         type: boolean
         default: false
 
-      sample_quickstarts_react:
-        description: 'quickstarts/react'
+      sample_quickstarts_quickstart_react:
+        description: 'quickstarts/quickstart-react'
         required: false
         type: boolean
         default: false
 
-      sample_quickstarts_react_b2b:
-        description: 'quickstarts/react-b2b'
+      sample_quickstarts_quickstart_react_b2b:
+        description: 'quickstarts/quickstart-react-b2b'
         required: false
         type: boolean
         default: false
 
-      sample_quickstarts_vue:
-        description: 'quickstarts/vue'
+      sample_quickstarts_quickstart_vue:
+        description: 'quickstarts/quickstart-vue'
         required: false
         type: boolean
         default: false
 
-      sample_better_auth_nextjs:
+      sample_integrations_better_auth_nextjs:
         description: 'integrations/better-auth-nextjs'
         required: false
         type: boolean
         default: false
 
-      sample_flutter_app_auth:
-        description: 'integrations/flutter-app-auth'
+      sample_integrations_app_auth_flutter:
+        description: 'integrations/app-auth-flutter'
         required: false
         type: boolean
         default: false
 
-      sample_patterns_react_express_bff:
-        description: 'patterns/react-express-bff'
+      sample_patterns_bff_react_express:
+        description: 'patterns/bff-react-express'
         required: false
         type: boolean
         default: false
 
-      sample_self_care_account:
-        description: 'self-care/account'
+      sample_self_service_myaccount_react:
+        description: 'self-service/myaccount-react'
         required: false
         type: boolean
         default: false
 
-      sample_management_admin:
-        description: 'management/admin'
+      sample_management_admin_react:
+        description: 'management/admin-react'
         required: false
         type: boolean
         default: false
 
-      sample_b2b_wayfinder_enterprise:
-        description: 'b2b/wayfinder-enterprise'
+      sample_b2b_wayfinder_enterprise_nextjs:
+        description: 'b2b/wayfinder-enterprise-nextjs'
         required: false
         type: boolean
         default: false
@@ -159,24 +159,24 @@ jobs:
       - name: 📋 Plan Releases
         id: plan
         env:
-          sample_quickstarts_android: ${{ github.event.inputs.sample_quickstarts_android }}
-          sample_quickstarts_browser: ${{ github.event.inputs.sample_quickstarts_browser }}
-          sample_quickstarts_express: ${{ github.event.inputs.sample_quickstarts_express }}
-          sample_quickstarts_flutter: ${{ github.event.inputs.sample_quickstarts_flutter }}
-          sample_quickstarts_ios: ${{ github.event.inputs.sample_quickstarts_ios }}
-          sample_quickstarts_nextjs: ${{ github.event.inputs.sample_quickstarts_nextjs }}
-          sample_quickstarts_nextjs_b2b: ${{ github.event.inputs.sample_quickstarts_nextjs_b2b }}
-          sample_quickstarts_node: ${{ github.event.inputs.sample_quickstarts_node }}
-          sample_quickstarts_nuxt: ${{ github.event.inputs.sample_quickstarts_nuxt }}
-          sample_quickstarts_react: ${{ github.event.inputs.sample_quickstarts_react }}
-          sample_quickstarts_react_b2b: ${{ github.event.inputs.sample_quickstarts_react_b2b }}
-          sample_quickstarts_vue: ${{ github.event.inputs.sample_quickstarts_vue }}
-          sample_better_auth_nextjs: ${{ github.event.inputs.sample_better_auth_nextjs }}
-          sample_flutter_app_auth: ${{ github.event.inputs.sample_flutter_app_auth }}
-          sample_patterns_react_express_bff: ${{ github.event.inputs.sample_patterns_react_express_bff }}
-          sample_self_care_account: ${{ github.event.inputs.sample_self_care_account }}
-          sample_management_admin: ${{ github.event.inputs.sample_management_admin }}
-          sample_b2b_wayfinder_enterprise: ${{ github.event.inputs.sample_b2b_wayfinder_enterprise }}
+          sample_quickstarts_quickstart_android: ${{ github.event.inputs.sample_quickstarts_quickstart_android }}
+          sample_quickstarts_quickstart_browser: ${{ github.event.inputs.sample_quickstarts_quickstart_browser }}
+          sample_quickstarts_quickstart_express: ${{ github.event.inputs.sample_quickstarts_quickstart_express }}
+          sample_quickstarts_quickstart_flutter: ${{ github.event.inputs.sample_quickstarts_quickstart_flutter }}
+          sample_quickstarts_quickstart_ios: ${{ github.event.inputs.sample_quickstarts_quickstart_ios }}
+          sample_quickstarts_quickstart_nextjs: ${{ github.event.inputs.sample_quickstarts_quickstart_nextjs }}
+          sample_quickstarts_quickstart_nextjs_b2b: ${{ github.event.inputs.sample_quickstarts_quickstart_nextjs_b2b }}
+          sample_quickstarts_quickstart_node: ${{ github.event.inputs.sample_quickstarts_quickstart_node }}
+          sample_quickstarts_quickstart_nuxt: ${{ github.event.inputs.sample_quickstarts_quickstart_nuxt }}
+          sample_quickstarts_quickstart_react: ${{ github.event.inputs.sample_quickstarts_quickstart_react }}
+          sample_quickstarts_quickstart_react_b2b: ${{ github.event.inputs.sample_quickstarts_quickstart_react_b2b }}
+          sample_quickstarts_quickstart_vue: ${{ github.event.inputs.sample_quickstarts_quickstart_vue }}
+          sample_integrations_better_auth_nextjs: ${{ github.event.inputs.sample_integrations_better_auth_nextjs }}
+          sample_integrations_app_auth_flutter: ${{ github.event.inputs.sample_integrations_app_auth_flutter }}
+          sample_patterns_bff_react_express: ${{ github.event.inputs.sample_patterns_bff_react_express }}
+          sample_self_service_myaccount_react: ${{ github.event.inputs.sample_self_service_myaccount_react }}
+          sample_management_admin_react: ${{ github.event.inputs.sample_management_admin_react }}
+          sample_b2b_wayfinder_enterprise_nextjs: ${{ github.event.inputs.sample_b2b_wayfinder_enterprise_nextjs }}
         run: |
           samples='[]'
           add() {
@@ -184,24 +184,24 @@ jobs:
               samples=$(jq -c --argjson s "$2" '. + [$s]' <<< "$samples")
             fi
           }
-          add sample_quickstarts_android '{"path":"quickstarts/android","emoji":"🤖","title":"ThunderID Android Quickstart Sample"}'
-          add sample_quickstarts_browser '{"path":"quickstarts/browser","emoji":"🌐","title":"ThunderID Browser Quickstart Sample"}'
-          add sample_quickstarts_express '{"path":"quickstarts/express","emoji":"🚂","title":"ThunderID Express Quickstart Sample"}'
-          add sample_quickstarts_flutter '{"path":"quickstarts/flutter","emoji":"🦋","title":"ThunderID Flutter Quickstart Sample"}'
-          add sample_quickstarts_ios '{"path":"quickstarts/ios","emoji":"🍎","title":"ThunderID iOS Quickstart Sample"}'
-          add sample_quickstarts_nextjs '{"path":"quickstarts/nextjs","emoji":"▲","title":"ThunderID Next.js Quickstart Sample"}'
-          add sample_quickstarts_nextjs_b2b '{"path":"quickstarts/nextjs-b2b","emoji":"▲","title":"ThunderID Next.js B2B Quickstart Sample"}'
-          add sample_quickstarts_node '{"path":"quickstarts/node","emoji":"🟢","title":"ThunderID Node.js Quickstart Sample"}'
-          add sample_quickstarts_nuxt '{"path":"quickstarts/nuxt","emoji":"💚","title":"ThunderID Nuxt Quickstart Sample"}'
-          add sample_quickstarts_react '{"path":"quickstarts/react","emoji":"⚛️","title":"ThunderID React Quickstart Sample"}'
-          add sample_quickstarts_react_b2b '{"path":"quickstarts/react-b2b","emoji":"⚛️","title":"ThunderID React B2B Quickstart Sample"}'
-          add sample_quickstarts_vue '{"path":"quickstarts/vue","emoji":"🟩","title":"ThunderID Vue Quickstart Sample"}'
-          add sample_better_auth_nextjs '{"path":"integrations/better-auth-nextjs","emoji":"🔐","title":"ThunderID Better Auth Next.js Sample"}'
-          add sample_flutter_app_auth '{"path":"integrations/flutter-app-auth","emoji":"🦋","title":"ThunderID Flutter AppAuth Sample"}'
-          add sample_patterns_react_express_bff '{"path":"patterns/react-express-bff","emoji":"🛡️","title":"ThunderID React Express BFF Sample"}'
-          add sample_self_care_account '{"path":"self-care/account","emoji":"👤","title":"ThunderID Self-Care Account Sample"}'
-          add sample_management_admin '{"path":"management/admin","emoji":"🏢","title":"ThunderID Management Admin Sample"}'
-          add sample_b2b_wayfinder_enterprise '{"path":"b2b/wayfinder-enterprise","emoji":"🧭","title":"ThunderID Wayfinder Enterprise Sample"}'
+          add sample_quickstarts_quickstart_android '{"path":"quickstarts/quickstart-android","emoji":"🤖","title":"ThunderID Android Quickstart Sample"}'
+          add sample_quickstarts_quickstart_browser '{"path":"quickstarts/quickstart-browser","emoji":"🌐","title":"ThunderID Browser Quickstart Sample"}'
+          add sample_quickstarts_quickstart_express '{"path":"quickstarts/quickstart-express","emoji":"🚂","title":"ThunderID Express Quickstart Sample"}'
+          add sample_quickstarts_quickstart_flutter '{"path":"quickstarts/quickstart-flutter","emoji":"🦋","title":"ThunderID Flutter Quickstart Sample"}'
+          add sample_quickstarts_quickstart_ios '{"path":"quickstarts/quickstart-ios","emoji":"🍎","title":"ThunderID iOS Quickstart Sample"}'
+          add sample_quickstarts_quickstart_nextjs '{"path":"quickstarts/quickstart-nextjs","emoji":"▲","title":"ThunderID Next.js Quickstart Sample"}'
+          add sample_quickstarts_quickstart_nextjs_b2b '{"path":"quickstarts/quickstart-nextjs-b2b","emoji":"▲","title":"ThunderID Next.js B2B Quickstart Sample"}'
+          add sample_quickstarts_quickstart_node '{"path":"quickstarts/quickstart-node","emoji":"🟢","title":"ThunderID Node.js Quickstart Sample"}'
+          add sample_quickstarts_quickstart_nuxt '{"path":"quickstarts/quickstart-nuxt","emoji":"💚","title":"ThunderID Nuxt Quickstart Sample"}'
+          add sample_quickstarts_quickstart_react '{"path":"quickstarts/quickstart-react","emoji":"⚛️","title":"ThunderID React Quickstart Sample"}'
+          add sample_quickstarts_quickstart_react_b2b '{"path":"quickstarts/quickstart-react-b2b","emoji":"⚛️","title":"ThunderID React B2B Quickstart Sample"}'
+          add sample_quickstarts_quickstart_vue '{"path":"quickstarts/quickstart-vue","emoji":"🟩","title":"ThunderID Vue Quickstart Sample"}'
+          add sample_integrations_better_auth_nextjs '{"path":"integrations/better-auth-nextjs","emoji":"🔐","title":"ThunderID Better Auth Next.js Sample"}'
+          add sample_integrations_app_auth_flutter '{"path":"integrations/app-auth-flutter","emoji":"🦋","title":"ThunderID Flutter AppAuth Sample"}'
+          add sample_patterns_bff_react_express '{"path":"patterns/bff-react-express","emoji":"🛡️","title":"ThunderID React Express BFF Sample"}'
+          add sample_self_service_myaccount_react '{"path":"self-service/myaccount-react","emoji":"👤","title":"ThunderID My Account Sample"}'
+          add sample_management_admin_react '{"path":"management/admin-react","emoji":"🏢","title":"ThunderID Management Admin Sample"}'
+          add sample_b2b_wayfinder_enterprise_nextjs '{"path":"b2b/wayfinder-enterprise-nextjs","emoji":"🧭","title":"ThunderID Wayfinder Enterprise Sample"}'
           if [ "$samples" = "[]" ]; then
             echo "❌ No sample selected. Check at least one sample_* input."
             exit 1

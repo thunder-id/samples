@@ -29,7 +29,7 @@ sample banner matches the banner of the SDK it uses.
 ## Technology logos
 
 Use a logo that is already in `assets/logos/` when the sample's technology has one. A sample
-that is about a feature rather than a platform (for example `self-care/account`) uses the
+that is about a feature rather than a platform (for example `self-service/myaccount-react`) uses the
 logo of the framework it is built with.
 
 To add a logo:
@@ -49,10 +49,11 @@ To add a logo:
 ## Add or update a banner
 
 1. **Edit `banners.json`.** A sample entry takes:
-   - `path`: the sample directory, `<area>/<sample>`. The PNG is named after it, with the
-     slash replaced: `quickstarts/react` renders to `quickstarts-react.png`.
+   - `path`: the sample directory, `<area>/<sample>`. The PNG is named after the sample
+     alone, which is unique across areas: `quickstarts/quickstart-react` renders to
+     `quickstart-react.png`.
    - `alt`: the image alt text, `ThunderID <Technology> <Quickstart|Sample>`.
-   - `badge`: `QUICKSTART`, `INTEGRATION`, `PATTERN`, `SELF-CARE SAMPLE`, `MANAGEMENT SAMPLE`, or `B2B SAMPLE`, matching the area.
+   - `badge`: `QUICKSTART`, `INTEGRATION`, `PATTERN`, `SELF-SERVICE SAMPLE`, `MANAGEMENT SAMPLE`, or `B2B SAMPLE`, matching the area.
    - `logo`: a key in `logos.json`.
    - `title`: short, with the emphasized part wrapped in `<accent>`, for example
      `React <accent>Quickstart</accent>`. It has to fit on one line at 48px.
@@ -65,7 +66,7 @@ To add a logo:
 2. **Render.** From this skill's `scripts` directory:
 
    ```bash
-   npx -y -p playwright@1.60.0 sh -c 'NODE_PATH="$(dirname "$(command -v playwright)")/.." node render.cjs quickstarts/react'
+   npx -y -p playwright@1.60.0 sh -c 'NODE_PATH="$(dirname "$(command -v playwright)")/.." node render.cjs quickstarts/quickstart-react'
    ```
 
    Pass one or more sample paths, or `repo` for the repository banner. With none it renders
@@ -84,7 +85,7 @@ To add a logo:
    `README.md`, followed by a blank line and the existing `#` heading:
 
    ```markdown
-   ![ThunderID React Quickstart](https://raw.githubusercontent.com/thunder-id/samples/main/.github/assets/banners/quickstarts-react.png)
+   ![ThunderID React Quickstart](https://raw.githubusercontent.com/thunder-id/samples/main/.github/assets/banners/quickstart-react.png)
    ```
 
    Always use the absolute `raw.githubusercontent.com` URL on `main`, never a relative path.

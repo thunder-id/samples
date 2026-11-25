@@ -5,18 +5,30 @@ the published release of its SDK, so it runs on its own once copied out of this 
 
 ## Layout
 
-Samples live at `<area>/<sample>`:
+Samples live at `<area>/<sample>`, exactly two levels deep:
 
-| Area | Holds |
-|---|---|
-| `quickstarts` | The minimal app per platform that the ThunderID docs quickstarts walk through |
-| `integrations` | ThunderID used through a third-party library, such as Better Auth or flutter_appauth |
-| `patterns` | An architecture that spans more than one app, such as a React app with an Express BFF |
-| `self-care` | Apps built on ThunderID's self-service features |
-| `management` | Apps where an administrator manages an organization's ThunderID resources |
-| `b2b` | Apps that serve many business customers, each one an organization, such as a B2B SaaS app |
+| Area | Holds | Sample name | Example |
+|---|---|---|---|
+| `quickstarts` | The minimal app per platform that the ThunderID docs quickstarts walk through | `quickstart-<platform>[-<variant>]` | `quickstarts/quickstart-react-b2b` |
+| `integrations` | ThunderID used through a third-party library | `<library>-<platform>` | `integrations/app-auth-flutter` |
+| `patterns` | An architecture that spans more than one app | `<pattern>-<platforms>` | `patterns/bff-react-express` |
+| `self-service` | Apps where a signed-in user manages their own account | `<app>-<platform>` | `self-service/myaccount-react` |
+| `management` | Apps where an administrator manages an organization's ThunderID resources | `<app>-<platform>` | `management/admin-react` |
+| `b2b` | Apps that serve many business customers, each one an organization | `<app>-<platform>` | `b2b/wayfinder-enterprise-nextjs` |
+
+Name a sample in lowercase kebab case, ending with the platform it is built on. The same app on
+another platform is a sibling with its own suffix, such as `self-service/myaccount-vue`, never a
+nested folder. Sample names are unique across areas: the banner and the release zip are named
+after the sample alone (`myaccount-react.png`, `thunderid-myaccount-react-sample-v1.0.0.zip`).
+An npm sample's `package.json` is named `@thunderid/<sample>-sample`, and the apps inside a
+multi-app sample `@thunderid/<sample>-<app>`, such as `@thunderid/bff-react-express-client`.
 
 Each sample is released on its own, as a source zip tagged `sample/<area>/<sample>/v<version>`.
+The path is also the sample's ID outside this repository: the docs link to it, the docs'
+ecosystem releases feed and the Console's sample download look it up by it, and the SDK
+repositories' E2E suites copy the quickstarts by it. Renaming or moving a sample therefore
+needs matching changes in thunder-id/thunderid (`docs/`) and in the SDK repositories, and a
+release under the new path, since its earlier releases stay under the old tag.
 `.github/workflows/release.yml` builds the release and `pr-builder.yml` builds every sample
 on a pull request.
 
@@ -37,10 +49,12 @@ on a pull request.
 - Add it to `.github/workflows/release.yml`, in the same pull request, so it can be released.
   The workflow has no automatic discovery, so a sample left out of it never gets a release or
   a download. Add all three, in the same order as the other samples:
-  - a `sample_<name>` boolean input under `workflow_dispatch.inputs`, described by its path;
-  - the matching `sample_<name>: ${{ github.event.inputs.sample_<name> }}` line in the
-    **Plan Releases** step's `env`;
-  - an `add sample_<name> '{"path":"<area>/<sample>","emoji":"…","title":"ThunderID … Sample"}'`
+  - a `sample_<area>_<sample>` boolean input under `workflow_dispatch.inputs`, with every
+    hyphen turned into an underscore (`sample_self_service_myaccount_react`), described by its
+    path;
+  - the matching `sample_<area>_<sample>: ${{ github.event.inputs.sample_<area>_<sample> }}`
+    line in the **Plan Releases** step's `env`;
+  - an `add sample_<area>_<sample> '{"path":"<area>/<sample>","emoji":"…","title":"ThunderID … Sample"}'`
     line in that step's script.
 
   `workflow_dispatch` allows at most 25 inputs. Count them before adding one.
@@ -53,7 +67,7 @@ on a pull request.
 ## Sample README structure
 
 Every sample README uses the same sections, in this order. Copy an existing README of the same
-kind (for example `quickstarts/react/README.md` for a web app, `quickstarts/android/README.md`
+kind (for example `quickstarts/quickstart-react/README.md` for a web app, `quickstarts/quickstart-android/README.md`
 for a mobile app) and adapt it rather than starting from scratch.
 
 1. The banner image, then a blank line. See the sample-banner skill.

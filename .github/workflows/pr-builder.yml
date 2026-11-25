@@ -17,7 +17,7 @@ env:
   NODE_VERSION: "lts/*"
   # Advisories that Dependency Review and the npm audit step both accept. No patched release
   # exists for either, and both are reached only through nuxt's build and dev tooling in
-  # quickstarts/nuxt. Drop each once upstream ships a fix.
+  # quickstarts/quickstart-nuxt. Drop each once upstream ships a fix.
   #   GHSA-vfj7-8cjw-p6xm: braces stack-exhaustion DoS. Transitive via `nitropack` > `globby` >
   #     `fast-glob` > `micromatch` > `braces`, which only expands glob patterns taken from the
   #     project's own config and filesystem at build time.
@@ -46,10 +46,42 @@ jobs:
           fail-on-severity: high
           deny-licenses: GPL-3.0-only,GPL-3.0-or-later,AGPL-3.0-only,AGPL-3.0-or-later
           allow-ghsas: ${{ env.AUDIT_ALLOWED_GHSAS }}
-          # ThunderID's own Apache-2.0 package and Flutter's BSD-3-Clause material_ui, which the
-          # dependency graph reports with the non-SPDX lowercase ids `apache-2.0` and
-          # `bsd-3-clause`, failing the license validity check.
-          allow-dependencies-licenses: pkg:pub/thunderid_flutter,pkg:pub/material_ui
+          # The dependency graph reports pub.dev licenses with non-SPDX lowercase ids (`apache-2.0`,
+          # `bsd-3-clause`, `mit`) or none at all, which fails the license validity check. These are
+          # the Flutter samples' pub dependencies, all under permissive licenses. Add a new one here
+          # when a Flutter sample starts depending on it.
+          allow-dependencies-licenses: >-
+            pkg:pub/thunderid_flutter,
+            pkg:pub/material_ui,
+            pkg:pub/clock,
+            pkg:pub/code_assets,
+            pkg:pub/crypto,
+            pkg:pub/cupertino_icons,
+            pkg:pub/fake_async,
+            pkg:pub/flutter_appauth,
+            pkg:pub/flutter_appauth_platform_interface,
+            pkg:pub/flutter_dotenv,
+            pkg:pub/flutter_secure_storage,
+            pkg:pub/flutter_secure_storage_darwin,
+            pkg:pub/flutter_secure_storage_linux,
+            pkg:pub/flutter_secure_storage_platform_interface,
+            pkg:pub/hooks,
+            pkg:pub/jni,
+            pkg:pub/jni_flutter,
+            pkg:pub/matcher,
+            pkg:pub/material_color_utilities,
+            pkg:pub/objective_c,
+            pkg:pub/platform,
+            pkg:pub/pub_semver,
+            pkg:pub/record_use,
+            pkg:pub/stack_trace,
+            pkg:pub/test_api,
+            pkg:pub/url_launcher,
+            pkg:pub/vector_math,
+            pkg:pub/vm_service,
+            pkg:pub/web,
+            pkg:pub/win32,
+            pkg:pub/yaml
           comment-summary-in-pr: always
           base-ref: ${{ github.event.pull_request.base.sha }}
           head-ref: ${{ github.event.pull_request.head.sha }}
