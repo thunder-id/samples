@@ -56,7 +56,7 @@ The import creates:
 | Resource | Name | What it creates |
 |---|---|---|
 | User type | Wayfinder User (`wayfinder-user`) | The account schema, with self-registration on. Usable in every company. |
-| Resource server | Wayfinder Enterprise API (`urn:wayfinder-enterprise:api`) | The app's permissions: `booking:view`, `booking:create`, `booking:manage`, `policy:view` and `policy:manage` for the travel APIs, and `view` and `manage` on `user`, `group`, `role` and `sso` for the admin pages |
+| Resource server | Wayfinder Enterprise API (`urn:wayfinder-enterprise:api`) | The app's permissions: `booking:view`, `booking:create`, `booking:manage`, `policy:view` and `policy:manage` for the travel APIs, and `view` and `manage` on `user`, `group`, `role` and `sso` for the admin pages. Shared with every company. |
 | Server config | `defaultResourceServer` | Makes the Wayfinder Enterprise API the default resource server, for authorization requests that name no resource |
 | Role | Wayfinder Admin | Every Wayfinder permission. Shared with every company. |
 | Role | Wayfinder Member | `booking:view`, `booking:create` and `policy:view`. Shared with every company. |

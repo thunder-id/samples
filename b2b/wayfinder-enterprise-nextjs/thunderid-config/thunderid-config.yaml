@@ -59,6 +59,12 @@ description: Permissions of the Wayfinder Enterprise app
 identifier: urn:wayfinder-enterprise:api
 ouHandle: default
 delimiter: ":"
+# Shared with every company, so the roles shared there grant its permissions and a token issued for a company
+# carries them.
+sharingPolicies:
+  - id: 019f0a10-0000-7000-8000-0000000000a6
+    childUnits:
+      mode: all
 resources:
   - name: Booking
     handle: booking
