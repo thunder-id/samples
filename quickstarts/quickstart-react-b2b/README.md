@@ -35,6 +35,7 @@ cd my-app
 1. Sign in to the Console. With the quickstart image it is the Control Plane console, `https://localhost:8095/console`.
 2. Choose **Import / Export**, then **Import**. Upload `thunderid-config/thunderid-config.yaml` as the configuration file and `thunderid-config/thunderid.env` as the environment variables file.
 3. Choose **Continue**, then **Import configuration**.
+4. Share the System resource server with the companies, so the admin role grants `org` in a company. Clear the project selection, choose **Resource servers**, open **System**, and select the **Organization Access** tab. Choose **Default and chosen organization units**, keep **All child organization units**, and choose **Save**.
 
 The import replaces the `defaultResourceServer` setting, which only the Control Plane writes, so import there. Imported straight into a Data Plane, it is refused.
 
