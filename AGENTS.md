@@ -113,6 +113,22 @@ If the developer asks for pnpm or yarn, say that samples default to npm and why.
 want it, use it, and point out that CI installs every sample with `npm ci`, so the pull request
 builder needs a matching change.
 
+## Pull request labels
+
+Every pull request carries one label that says what kind of change it is. The `🔎 PR Check / 🏷️ Check PR Labels` check fails without one, and each sample's release notes and `CHANGELOG.md` are grouped by it (see `.github/release.yml`). A sample's notes list only the pull requests that changed files under it. Pick the label from what someone running the sample would notice:
+
+| Label | Use it for | Release notes section |
+|---|---|---|
+| `Type/New Feature` | Something that wasn't there before: a new sample, or a capability a sample now shows | 🚀 Features |
+| `Type/Improvement` | Something that exists, made better: an SDK version bump, clearer UI or README, better configuration | ✨ Improvements |
+| `Type/Bug` | A fix for a sample that behaved wrongly or didn't build | 🐛 Bug Fixes |
+| `skip-changelog` | A change nobody running a sample sees: CI and release tooling, banners, agent instructions | Left out |
+
+- When a change breaks how people get or run a sample, also add `breaking change`, and fill in the pull request's Breaking Changes section. Examples are a renamed or moved sample, or a changed configuration variable. It is listed under ⚠️ Breaking Changes.
+- When a change mixes kinds, pick the label that matters most to someone using the sample.
+- Add the label when raising the pull request (`gh pr create --label "Type/Bug"`), or later with `gh pr edit <number> --add-label "Type/Bug"`.
+- If the check ran before the label was added, re-running it fails again, because it replays the original event. Remove and re-add the label to start a fresh run.
+
 ## Rules
 
 - Always write `ThunderID`. Never use a bare `thunder`, `Thunder`, or `THUNDER` as a short
