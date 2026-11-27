@@ -6,6 +6,8 @@
     <string>https://localhost:8090</string>
     <key>THUNDERID_APPLICATION_ID</key>
     <string>your-application-id</string>
+    <key>THUNDERID_CLIENT_ID</key>
+    <string>your-client-id</string>
     <key>THUNDERID_ATTESTATION_ENABLED</key>
     <string>false</string>
 </dict>

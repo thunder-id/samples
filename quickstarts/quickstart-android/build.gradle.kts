@@ -24,10 +24,12 @@ android {
         fun config(key: String) = configProps.getProperty(key) ?: System.getenv(key) ?: ""
         val baseUrl = config("THUNDERID_BASE_URL")
         val appId = config("THUNDERID_APPLICATION_ID")
+        val clientId = config("THUNDERID_CLIENT_ID")
         val attestationEnabled = config("THUNDERID_ATTESTATION_ENABLED")
         val cloudProjectNumber = config("THUNDERID_CLOUD_PROJECT_NUMBER")
         buildConfigField("String", "THUNDERID_BASE_URL", "\"$baseUrl\"")
         buildConfigField("String", "THUNDERID_APPLICATION_ID", "\"$appId\"")
+        buildConfigField("String", "THUNDERID_CLIENT_ID", "\"$clientId\"")
         buildConfigField("boolean", "THUNDERID_ATTESTATION_ENABLED", attestationEnabled.toBoolean().toString())
         buildConfigField("long", "THUNDERID_CLOUD_PROJECT_NUMBER", "${cloudProjectNumber.toLongOrNull() ?: 0L}L")
     }

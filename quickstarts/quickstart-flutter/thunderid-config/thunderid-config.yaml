@@ -1,8 +1,8 @@
 ---
 resource_type: application
-# Application used exclusively by the Flutter Quickstart E2E suite. It has no OAuth profile: the
-# mobile SDKs authenticate app-natively via the Flow Execution API, so the sample app needs only
-# the base URL and this application ID.
+# Application used exclusively by the Flutter Quickstart E2E suite. The mobile SDKs authenticate
+# app-natively via the Flow Execution API and exchange the completed flow's assertion for an access
+# token, so the sample app needs the base URL, this application ID and the client ID below.
 #
 # The ID is fixed so the sample's Config.plist and the Maestro flows can be committed against a
 # known value instead of discovering it at run time.
@@ -33,3 +33,18 @@ isRegistrationFlowEnabled: true
 signOutFlowHandle: default-flow
 allowedUserTypes:
   - Person
+inboundAuthConfig:
+  - type: oauth2
+    config:
+      clientId: mobile-quickstart-e2e
+      # A public client needs authorization_code; the quickstart uses only the token exchange.
+      redirectUris:
+        - dev.thunderid.quickstart://callback
+      grantTypes:
+        - authorization_code
+        - urn:ietf:params:oauth:grant-type:token-exchange
+      responseTypes:
+        - code
+      pkceRequired: true
+      tokenEndpointAuthMethod: none
+      publicClient: true

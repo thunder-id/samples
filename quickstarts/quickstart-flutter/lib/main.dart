@@ -15,6 +15,7 @@ void main() async {
       config: ThunderIDConfig(
         baseUrl: dotenv.env['THUNDERID_BASE_URL']!,
         applicationId: dotenv.env['THUNDERID_APP_ID'],
+        clientId: dotenv.env['THUNDERID_CLIENT_ID'],
         scopes: const ['openid', 'profile', 'email'],
         attestationEnabled:
             dotenv.env['THUNDERID_ATTESTATION_ENABLED']?.toLowerCase() == 'true',

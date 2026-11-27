@@ -17,6 +17,7 @@ struct ThunderIDB2CApp: App {
         let attestationProvider = AppAttestTokenProvider()
         return ThunderIDConfig(
             baseUrl: dict["THUNDERID_BASE_URL"] ?? "",
+            clientId: dict["THUNDERID_CLIENT_ID"],
             scopes: ["openid", "profile", "email"],
             applicationId: dict["THUNDERID_APPLICATION_ID"],
             attestationEnabled: attestationEnabled,
