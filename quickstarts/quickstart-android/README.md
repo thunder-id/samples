@@ -29,7 +29,7 @@ cd my-app
 
 ## Configure
 
-1. In the ThunderID Console, create an **Android** application and copy its application ID. App-native authentication needs no OAuth2 client ID or redirect URL.
+1. In the ThunderID Console, create an **Android** application and copy its application ID and OAuth2 client ID. Add the `urn:ietf:params:oauth:grant-type:token-exchange` grant type to the application: when the sign-in flow completes, the SDK exchanges its result for an access token. App-native authentication needs no redirect URL.
 
 2. Create your `config.properties`:
 
@@ -41,6 +41,7 @@ cd my-app
    |---|---|
    | `THUNDERID_BASE_URL` | Base URL of your ThunderID server (HTTPS). |
    | `THUNDERID_APPLICATION_ID` | Application ID of the application. |
+   | `THUNDERID_CLIENT_ID` | OAuth2 client ID of the application. |
    | `THUNDERID_ATTESTATION_ENABLED` | Optional. `true` sends a Google Play Integrity token with each flow. |
    | `THUNDERID_CLOUD_PROJECT_NUMBER` | Optional. Google Cloud project number used for Play Integrity. |
 

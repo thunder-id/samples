@@ -31,6 +31,7 @@ class MainActivity : ComponentActivity() {
 
         val config = ThunderIDConfig(
             baseUrl = BuildConfig.THUNDERID_BASE_URL,
+            clientId = BuildConfig.THUNDERID_CLIENT_ID.takeIf { it.isNotBlank() },
             scopes = listOf("openid", "profile", "email"),
             applicationId = BuildConfig.THUNDERID_APPLICATION_ID.takeIf { it.isNotBlank() },
             attestationEnabled = attestationEnabled,
