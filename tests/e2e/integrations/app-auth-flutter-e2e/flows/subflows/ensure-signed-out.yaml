@@ -1,0 +1,12 @@
+appId: com.example.flutterAppauthSample
+---
+# The app restores a stored session on launch, and secure storage on iOS can outlive clearState,
+# so sign out first when a session is showing.
+- runFlow:
+    when:
+      visible: 'Signed in as.*'
+    commands:
+      - runFlow: sign-out.yaml
+- extendedWaitUntil:
+    visible: 'Sign in'
+    timeout: 20000

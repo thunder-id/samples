@@ -1,0 +1,12 @@
+node_modules
+package-lock.json
+playwright-report
+test-results
+blob-report
+.thunderid-server
+# Go template and YAML hybrids (ThunderID's declarative /import format), valid YAML only once the
+# placeholders are rendered on the server.
+shared/thunderid-config/*.yaml
+# Maestro output.
+*/*-e2e/report.xml
+*/*-e2e/app.log

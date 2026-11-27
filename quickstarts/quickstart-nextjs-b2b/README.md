@@ -62,7 +62,7 @@ The import replaces the `defaultResourceServer` setting, which only the Control 
 cp .env.example .env
 ```
 
-Set `THUNDERID_CLIENT_SECRET` to the client secret you set as `NEXTJS_B2B_CLIENT_SECRET`, and `THUNDERID_SECRET` to a long random string, for example from `openssl rand -base64 32`. The other defaults match the import.
+Set `THUNDERID_CLIENT_SECRET` to the client secret you set as `NEXTJS_B2B_CLIENT_SECRET`, and `THUNDERID_SESSION_SECRET` to a random value of at least 32 bytes, for example from `openssl rand -base64 32`. The other defaults match the import.
 
 | Variable | Description |
 |---|---|
@@ -72,7 +72,7 @@ Set `THUNDERID_CLIENT_SECRET` to the client secret you set as `NEXTJS_B2B_CLIENT
 | `NEXT_PUBLIC_THUNDERID_AFTER_SIGN_OUT_URL` | Where ThunderID returns the browser after sign-out |
 | `NEXT_PUBLIC_THUNDERID_SCOPES` | `ou` and `roles` put the company and the roles held there into the tokens. `org` asks for the permission a company admin needs. `device_sso` asks for a device secret, which the server uses to switch companies. |
 | `NEXT_PUBLIC_THUNDERID_SIGN_IN_FLOW_ID` | ID of the sign-in flow, whose `enterpriseIdp` variable a company admin sets |
-| `THUNDERID_SECRET` | Signs the session cookie |
+| `THUNDERID_SESSION_SECRET` | Encrypts the session cookie. At least 32 bytes, which production requires. |
 | `NODE_TLS_REJECT_UNAUTHORIZED` | Set to `0` in the example to accept a local server's self-signed certificate. Local development only. |
 
 ## Run

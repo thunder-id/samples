@@ -1,0 +1,80 @@
+appId: dev.thunderid.Quickstart
+---
+# Bring the app to the unauthenticated landing screen, whatever state it starts in.
+#
+# The SDK persists tokens in EncryptedSharedPreferences, which `clearState: true` does clear, but
+# the app can also be left mid-session by a previous flow that failed part way through. Starting
+# from an explicit known state keeps the suite re-runnable either way.
+- runFlow:
+    when:
+      visible: 'Session active'
+    commands:
+      # The scroll-then-tap is wrapped in a retry: a debug screenshot from a failed tapOn on the
+      # equivalent step in signup.yaml showed the list back at the very top, scrolled up again
+      # after scrollUntilVisible had already found "Sign out" - the home screen's own
+      # recomposition (it has a live "expires in" countdown) reset the scroll position in the gap
+      # before the tap landed. Retrying re-does the scroll from wherever the list actually is.
+      - retry:
+          maxRetries: 2
+          commands:
+            - scrollUntilVisible:
+                element: 'Sign out'
+                direction: DOWN
+                timeout: 20000
+            # "Token debug" sits immediately above "Sign out" in the action list - see the
+            # equivalent comment in signin.yaml. Let the scroll settle before tapping.
+            - waitForAnimationToEnd:
+                timeout: 3000
+            - tapOn: 'Sign out'
+      - extendedWaitUntil:
+          visible: 'Get started'
+          timeout: 20000
+
+# The CI emulator's own home-screen launcher, not the app under test, occasionally ANRs right
+# after a cold launchApp - debug screenshots from a failure here showed the landing screen fully
+# rendered ("Get started"/"Sign in" both visible) underneath a "Pixel Launcher isn't responding"
+# system dialog, which blocks it from the view hierarchy Maestro actually queries. No timeout
+# budget fixes this - the dialog sits there until dismissed, however long you wait.
+#
+# A single check-then-wait isn't enough either: the launcher has been observed to still be
+# unresponsive (or to ANR again) *after* a check here found no dialog yet, so the assertion below
+# still hit it. Loop the check-and-dismiss with the wait, so a dialog appearing anywhere in the
+# window - not just at the instant this first runs - still gets caught on the next attempt. Tap
+# "Wait" to let the launcher recover rather than closing anything.
+# The pattern has to match the element's *whole* text, not appear somewhere inside it. Maestro
+# compiles a text selector into a full-match regex, so the bare "isn't responding" used here
+# previously never matched the dialog's actual title, "Pixel Launcher isn't responding": the
+# conditional recorded itself as SKIPPED on every attempt while the dialog sat on screen, and
+# the assertion below failed anyway. The `.*` either side are what make it fire.
+- retry:
+    maxRetries: 3
+    commands:
+      - runFlow:
+          when:
+            visible: ".*isn't responding.*"
+          commands:
+            - tapOn: 'Wait'
+
+      # A bare assertVisible relies on Maestro's short default lookup timeout, which is not
+      # always enough for the landing screen to render on a loaded CI emulator/simulator - wait
+      # explicitly. Optional, because a landing screen that never arrives is handled just below.
+      - extendedWaitUntil:
+          visible: 'Sign in'
+          timeout: 15000
+          optional: true
+
+      # `launchApp: clearState: true` can lose a race with its own cleanup on a slow emulator.
+      # Clearing the data removes the app's task, and when that removal times out the system kills
+      # the package's process - by then the freshly launched one. Device logs from a failed run
+      # show "Destroy timeout of remove-task" followed by "Killing <new pid> ... remove task" a
+      # fraction of a second after launch, leaving a blank window that waiting never fixes.
+      # Relaunching recovers it. The data is already cleared, so this launch does not clear it
+      # again and cannot trigger the same race.
+      - runFlow:
+          when:
+            notVisible: 'Sign in'
+          commands:
+            - launchApp
+      - extendedWaitUntil:
+          visible: 'Sign in'
+          timeout: 15000

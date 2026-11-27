@@ -1,0 +1,549 @@
+# Copyright 2026 The ThunderID Authors
+# SPDX-License-Identifier: Apache-2.0
+#
+# Declarative OAuth2 application registrations for the web sample apps under E2E test that do not
+# ship a declarative config of their own, imported with `POST /import` by every web suite's global
+# setup (shared/setup/global-setup.ts) and by `thunderid.sh import`. The quickstart clients keep the
+# `JS_SDK_E2E_*` IDs the javascript-sdks E2E suite registers, so both suites can share one server.
+# The B2B samples (quickstart-react-b2b, quickstart-nextjs-b2b, wayfinder-enterprise-nextjs) import
+# their own thunderid-config/thunderid-config.yaml instead.
+#
+# The trailing server config is the CORS allowlist of every browser app's origin. An import
+# replaces the whole list, so it names every app, not only the one a suite tests.
+#
+# Double-brace placeholders below are filled from the `variables` map passed alongside this file's
+# content. shared/apps.ts holds the values, and the port and redirect URIs each app runs with.
+#
+# Note: this whole file is parsed as a Go template, comments included. Never write a literal
+# double-brace placeholder in prose here, even in a comment, or the import fails.
+
+---
+resource_type: application
+id: 019a0000-0000-7000-8000-0000000000b1
+ouHandle: default
+name: E2E browser/quickstart
+description: OAuth2 client for the browser SDK quickstart's E2E suite
+type: browser
+authFlowHandle: default-flow
+isRegistrationFlowEnabled: false
+isRecoveryFlowEnabled: false
+isSignOutFlowEnabled: false
+assertion:
+  validityPeriod: 3600
+loginConsent:
+  validityPeriod: 0
+allowedUserTypes:
+  - Person
+inboundAuthConfig:
+  - type: oauth2
+    config:
+      clientId: "{{.BROWSER_CLIENT_ID}}"
+      redirectUris:
+        {{- range .BROWSER_REDIRECT_URIS}}
+        - {{.}}
+        {{- end}}
+      postLogoutRedirectUris:
+        {{- range .BROWSER_REDIRECT_URIS}}
+        - {{.}}
+        {{- end}}
+      grantTypes:
+        - authorization_code
+      responseTypes:
+        - code
+      tokenEndpointAuthMethod: none
+      pkceRequired: true
+      publicClient: true
+      token:
+        accessToken:
+          userConfig:
+            validityPeriod: 3600
+            attributes: [given_name, family_name, email]
+        idToken:
+          validityPeriod: 3600
+          userAttributes: [given_name, family_name, email]
+          responseType: JWT
+      userInfo:
+        responseType: JSON
+        userAttributes: [given_name, family_name, email]
+
+---
+resource_type: application
+id: 019a0000-0000-7000-8000-0000000000b2
+ouHandle: default
+name: E2E react/quickstart
+description: OAuth2 client for the React SDK quickstart's E2E suite
+type: browser
+authFlowHandle: default-flow
+isRegistrationFlowEnabled: false
+isRecoveryFlowEnabled: false
+isSignOutFlowEnabled: false
+assertion:
+  validityPeriod: 3600
+loginConsent:
+  validityPeriod: 0
+allowedUserTypes:
+  - Person
+inboundAuthConfig:
+  - type: oauth2
+    config:
+      clientId: "{{.REACT_CLIENT_ID}}"
+      redirectUris:
+        {{- range .REACT_REDIRECT_URIS}}
+        - {{.}}
+        {{- end}}
+      postLogoutRedirectUris:
+        {{- range .REACT_REDIRECT_URIS}}
+        - {{.}}
+        {{- end}}
+      grantTypes:
+        - authorization_code
+      responseTypes:
+        - code
+      tokenEndpointAuthMethod: none
+      pkceRequired: true
+      publicClient: true
+      token:
+        accessToken:
+          userConfig:
+            validityPeriod: 3600
+            attributes: [given_name, family_name, email]
+        idToken:
+          validityPeriod: 3600
+          userAttributes: [given_name, family_name, email]
+          responseType: JWT
+      userInfo:
+        responseType: JSON
+        userAttributes: [given_name, family_name, email]
+
+---
+resource_type: application
+id: 019a0000-0000-7000-8000-0000000000b3
+ouHandle: default
+name: E2E vue/quickstart
+description: OAuth2 client for the Vue SDK quickstart's E2E suite
+type: browser
+authFlowHandle: default-flow
+isRegistrationFlowEnabled: false
+isRecoveryFlowEnabled: false
+isSignOutFlowEnabled: false
+assertion:
+  validityPeriod: 3600
+loginConsent:
+  validityPeriod: 0
+allowedUserTypes:
+  - Person
+inboundAuthConfig:
+  - type: oauth2
+    config:
+      clientId: "{{.VUE_CLIENT_ID}}"
+      redirectUris:
+        {{- range .VUE_REDIRECT_URIS}}
+        - {{.}}
+        {{- end}}
+      postLogoutRedirectUris:
+        {{- range .VUE_REDIRECT_URIS}}
+        - {{.}}
+        {{- end}}
+      grantTypes:
+        - authorization_code
+      responseTypes:
+        - code
+      tokenEndpointAuthMethod: none
+      pkceRequired: true
+      publicClient: true
+      token:
+        accessToken:
+          userConfig:
+            validityPeriod: 3600
+            attributes: [given_name, family_name, email]
+        idToken:
+          validityPeriod: 3600
+          userAttributes: [given_name, family_name, email]
+          responseType: JWT
+      userInfo:
+        responseType: JSON
+        userAttributes: [given_name, family_name, email]
+
+---
+resource_type: application
+id: 019a0000-0000-7000-8000-0000000000b4
+ouHandle: default
+name: E2E nextjs/quickstart
+description: OAuth2 client for the Next.js SDK quickstart's E2E suite (redirect flow)
+type: browser
+authFlowHandle: default-flow
+isRegistrationFlowEnabled: false
+isRecoveryFlowEnabled: false
+isSignOutFlowEnabled: false
+assertion:
+  validityPeriod: 3600
+loginConsent:
+  validityPeriod: 0
+allowedUserTypes:
+  - Person
+inboundAuthConfig:
+  - type: oauth2
+    config:
+      clientId: "{{.NEXTJS_CLIENT_ID}}"
+      clientSecret: "{{.NEXTJS_CLIENT_SECRET}}"
+      redirectUris:
+        {{- range .NEXTJS_REDIRECT_URIS}}
+        - {{.}}
+        {{- end}}
+      postLogoutRedirectUris:
+        {{- range .NEXTJS_REDIRECT_URIS}}
+        - {{.}}
+        {{- end}}
+      grantTypes:
+        - authorization_code
+      responseTypes:
+        - code
+      tokenEndpointAuthMethod: client_secret_basic
+      pkceRequired: true
+      publicClient: false
+      token:
+        accessToken:
+          userConfig:
+            validityPeriod: 3600
+            attributes: [given_name, family_name, email]
+        idToken:
+          validityPeriod: 3600
+          userAttributes: [given_name, family_name, email]
+          responseType: JWT
+      userInfo:
+        responseType: JSON
+        userAttributes: [given_name, family_name, email]
+
+---
+resource_type: application
+id: 019a0000-0000-7000-8000-0000000000b5
+ouHandle: default
+name: E2E nuxt/quickstart
+description: OAuth2 client for the Nuxt SDK quickstart's E2E suite (redirect flow)
+type: browser
+authFlowHandle: default-flow
+isRegistrationFlowEnabled: false
+isRecoveryFlowEnabled: false
+isSignOutFlowEnabled: false
+assertion:
+  validityPeriod: 3600
+loginConsent:
+  validityPeriod: 0
+allowedUserTypes:
+  - Person
+inboundAuthConfig:
+  - type: oauth2
+    config:
+      clientId: "{{.NUXT_CLIENT_ID}}"
+      clientSecret: "{{.NUXT_CLIENT_SECRET}}"
+      redirectUris:
+        {{- range .NUXT_REDIRECT_URIS}}
+        - {{.}}
+        {{- end}}
+      postLogoutRedirectUris:
+        {{- range .NUXT_POST_LOGOUT_REDIRECT_URIS}}
+        - {{.}}
+        {{- end}}
+      grantTypes:
+        - authorization_code
+      responseTypes:
+        - code
+      tokenEndpointAuthMethod: client_secret_basic
+      pkceRequired: true
+      publicClient: false
+      token:
+        accessToken:
+          userConfig:
+            validityPeriod: 3600
+            attributes: [given_name, family_name, email]
+        idToken:
+          validityPeriod: 3600
+          userAttributes: [given_name, family_name, email]
+          responseType: JWT
+      userInfo:
+        responseType: JSON
+        userAttributes: [given_name, family_name, email]
+
+---
+resource_type: application
+id: 019a0000-0000-7000-8000-0000000000b6
+ouHandle: default
+name: E2E express/quickstart
+description: OAuth2 client for the Express SDK quickstart's E2E suite
+type: browser
+authFlowHandle: default-flow
+isRegistrationFlowEnabled: false
+isRecoveryFlowEnabled: false
+isSignOutFlowEnabled: false
+assertion:
+  validityPeriod: 3600
+loginConsent:
+  validityPeriod: 0
+allowedUserTypes:
+  - Person
+inboundAuthConfig:
+  - type: oauth2
+    config:
+      clientId: "{{.EXPRESS_CLIENT_ID}}"
+      clientSecret: "{{.EXPRESS_CLIENT_SECRET}}"
+      redirectUris:
+        {{- range .EXPRESS_REDIRECT_URIS}}
+        - {{.}}
+        {{- end}}
+      postLogoutRedirectUris:
+        {{- range .EXPRESS_POST_LOGOUT_REDIRECT_URIS}}
+        - {{.}}
+        {{- end}}
+      grantTypes:
+        - authorization_code
+      responseTypes:
+        - code
+      tokenEndpointAuthMethod: client_secret_basic
+      pkceRequired: true
+      publicClient: false
+      token:
+        accessToken:
+          userConfig:
+            validityPeriod: 3600
+            attributes: [given_name, family_name, email]
+        idToken:
+          validityPeriod: 3600
+          userAttributes: [given_name, family_name, email]
+          responseType: JWT
+      userInfo:
+        responseType: JSON
+        userAttributes: [given_name, family_name, email]
+
+---
+resource_type: application
+id: 019a0000-0000-7000-8000-0000000000b7
+ouHandle: default
+name: E2E node/quickstart
+description: OAuth2 client for the Node SDK quickstart's E2E suite (client_credentials, no browser UI)
+type: fullstack
+authFlowHandle: default-flow
+isRegistrationFlowEnabled: false
+isRecoveryFlowEnabled: false
+isSignOutFlowEnabled: false
+inboundAuthConfig:
+  - type: oauth2
+    config:
+      clientId: "{{.NODE_CLIENT_ID}}"
+      clientSecret: "{{.NODE_CLIENT_SECRET}}"
+      grantTypes:
+        - client_credentials
+      tokenEndpointAuthMethod: client_secret_basic
+      pkceRequired: false
+      publicClient: false
+
+---
+resource_type: application
+id: 019a0000-0000-7000-8000-0000000000c1
+ouHandle: default
+name: E2E management/admin-react
+description: OAuth2 client for the admin-react sample's E2E suite
+type: browser
+authFlowHandle: default-flow
+isRegistrationFlowEnabled: false
+isRecoveryFlowEnabled: false
+isSignOutFlowEnabled: false
+assertion:
+  validityPeriod: 3600
+loginConsent:
+  validityPeriod: 0
+allowedUserTypes:
+  - Person
+inboundAuthConfig:
+  - type: oauth2
+    config:
+      clientId: "{{.ADMIN_REACT_CLIENT_ID}}"
+      redirectUris:
+        {{- range .ADMIN_REACT_REDIRECT_URIS}}
+        - {{.}}
+        {{- end}}
+      postLogoutRedirectUris:
+        {{- range .ADMIN_REACT_REDIRECT_URIS}}
+        - {{.}}
+        {{- end}}
+      grantTypes:
+        - authorization_code
+        - refresh_token
+      responseTypes:
+        - code
+      tokenEndpointAuthMethod: none
+      pkceRequired: true
+      publicClient: true
+      token:
+        accessToken:
+          userConfig:
+            validityPeriod: 3600
+            attributes: [given_name, family_name, email]
+        idToken:
+          validityPeriod: 3600
+          userAttributes: [given_name, family_name, email]
+          responseType: JWT
+      userInfo:
+        responseType: JSON
+        userAttributes: [given_name, family_name, email]
+
+---
+resource_type: application
+id: 019a0000-0000-7000-8000-0000000000c2
+ouHandle: default
+name: E2E self-service/myaccount-react
+description: OAuth2 client for the myaccount-react sample's E2E suite
+type: browser
+authFlowHandle: default-flow
+isRegistrationFlowEnabled: false
+isRecoveryFlowEnabled: false
+isSignOutFlowEnabled: false
+assertion:
+  validityPeriod: 3600
+loginConsent:
+  validityPeriod: 0
+allowedUserTypes:
+  - Person
+inboundAuthConfig:
+  - type: oauth2
+    config:
+      clientId: "{{.MYACCOUNT_REACT_CLIENT_ID}}"
+      redirectUris:
+        {{- range .MYACCOUNT_REACT_REDIRECT_URIS}}
+        - {{.}}
+        {{- end}}
+      postLogoutRedirectUris:
+        {{- range .MYACCOUNT_REACT_REDIRECT_URIS}}
+        - {{.}}
+        {{- end}}
+      grantTypes:
+        - authorization_code
+        - refresh_token
+      responseTypes:
+        - code
+      tokenEndpointAuthMethod: none
+      pkceRequired: true
+      publicClient: true
+      token:
+        accessToken:
+          userConfig:
+            validityPeriod: 3600
+            attributes: [given_name, family_name, email]
+        idToken:
+          validityPeriod: 3600
+          userAttributes: [given_name, family_name, email]
+          responseType: JWT
+      userInfo:
+        responseType: JSON
+        userAttributes: [given_name, family_name, email]
+
+---
+resource_type: application
+id: 019a0000-0000-7000-8000-0000000000c3
+ouHandle: default
+name: E2E patterns/bff-react-express
+description: OAuth2 client of the BFF in the bff-react-express sample's E2E suite
+type: browser
+authFlowHandle: default-flow
+isRegistrationFlowEnabled: false
+isRecoveryFlowEnabled: false
+isSignOutFlowEnabled: false
+assertion:
+  validityPeriod: 3600
+loginConsent:
+  validityPeriod: 0
+allowedUserTypes:
+  - Person
+inboundAuthConfig:
+  - type: oauth2
+    config:
+      clientId: "{{.BFF_REACT_EXPRESS_CLIENT_ID}}"
+      clientSecret: "{{.BFF_REACT_EXPRESS_CLIENT_SECRET}}"
+      redirectUris:
+        {{- range .BFF_REACT_EXPRESS_REDIRECT_URIS}}
+        - {{.}}
+        {{- end}}
+      postLogoutRedirectUris:
+        {{- range .BFF_REACT_EXPRESS_POST_LOGOUT_REDIRECT_URIS}}
+        - {{.}}
+        {{- end}}
+      grantTypes:
+        - authorization_code
+        - refresh_token
+      responseTypes:
+        - code
+      tokenEndpointAuthMethod: client_secret_basic
+      pkceRequired: true
+      publicClient: false
+      token:
+        accessToken:
+          userConfig:
+            validityPeriod: 3600
+            attributes: [given_name, family_name, email]
+        idToken:
+          validityPeriod: 3600
+          userAttributes: [given_name, family_name, email]
+          responseType: JWT
+      userInfo:
+        responseType: JSON
+        userAttributes: [given_name, family_name, email]
+
+---
+resource_type: application
+id: 019a0000-0000-7000-8000-0000000000c4
+ouHandle: default
+name: E2E integrations/better-auth-nextjs
+description: OAuth2 client for the better-auth-nextjs sample's E2E suite
+type: browser
+authFlowHandle: default-flow
+isRegistrationFlowEnabled: false
+isRecoveryFlowEnabled: false
+isSignOutFlowEnabled: false
+assertion:
+  validityPeriod: 3600
+loginConsent:
+  validityPeriod: 0
+allowedUserTypes:
+  - Person
+inboundAuthConfig:
+  - type: oauth2
+    config:
+      clientId: "{{.BETTER_AUTH_NEXTJS_CLIENT_ID}}"
+      clientSecret: "{{.BETTER_AUTH_NEXTJS_CLIENT_SECRET}}"
+      redirectUris:
+        {{- range .BETTER_AUTH_NEXTJS_REDIRECT_URIS}}
+        - {{.}}
+        {{- end}}
+      postLogoutRedirectUris:
+        {{- range .BETTER_AUTH_NEXTJS_POST_LOGOUT_REDIRECT_URIS}}
+        - {{.}}
+        {{- end}}
+      grantTypes:
+        - authorization_code
+        - refresh_token
+      responseTypes:
+        - code
+      # Better Auth sends the client secret in the request body by default.
+      tokenEndpointAuthMethod: client_secret_post
+      pkceRequired: true
+      publicClient: false
+      token:
+        accessToken:
+          userConfig:
+            validityPeriod: 3600
+            attributes: [given_name, family_name, email]
+        idToken:
+          validityPeriod: 3600
+          userAttributes: [given_name, family_name, email]
+          responseType: JWT
+      userInfo:
+        responseType: JSON
+        userAttributes: [given_name, family_name, email]
+
+---
+resource_type: server_config
+name: cors
+value:
+  allowedOrigins:
+    {{- range .ALL_ORIGINS}}
+    - {{.}}
+    {{- end}}

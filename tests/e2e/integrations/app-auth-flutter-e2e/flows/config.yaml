@@ -1,0 +1,4 @@
+# Maestro workspace configuration. Only the top-level flows are tests; subflows/ holds the shared
+# building blocks they run.
+flows:
+  - '*.yaml'

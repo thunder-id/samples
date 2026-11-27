@@ -33,7 +33,7 @@ cd my-app
    | `NEXT_PUBLIC_THUNDERID_BASE_URL` | Base URL of your ThunderID server. |
    | `NEXT_PUBLIC_THUNDERID_APPLICATION_ID` | Application ID of the application. |
    | `THUNDERID_FLOW_SECRET` | Flow Secret of the application. Server-only. |
-   | `THUNDERID_SECRET` | Encrypts the session cookie. Generate it with `openssl rand -base64 32`. |
+   | `THUNDERID_SESSION_SECRET` | Encrypts the session cookie. At least 32 bytes, which production requires. Generate it with `openssl rand -base64 32`. |
    | `NEXT_PUBLIC_THUNDERID_SIGN_IN_URL` | The app's sign-in route. Keep `/signin`. |
    | `NEXT_PUBLIC_THUNDERID_SIGN_UP_URL` | The app's sign-up route. Keep `/signup`. |
    | `NODE_TLS_REJECT_UNAUTHORIZED` | Set to `0` in the example to accept a local server's self-signed certificate. Local development only. |

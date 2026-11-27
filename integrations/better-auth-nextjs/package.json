@@ -9,7 +9,7 @@
     "start": "next start"
   },
   "dependencies": {
-    "@thunderid/better-auth": "0.1.1",
+    "@thunderid/better-auth": "latest",
     "better-auth": "^1.7.18",
     "next": "^15.5.29",
     "react": "^19.2.9",

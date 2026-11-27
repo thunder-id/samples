@@ -1,0 +1,18 @@
+appId: dev.thunderid.Quickstart
+---
+# Run once by run-e2e.sh before the suite, not as a test of its own.
+#
+# The first TLS trust evaluation on a freshly booted simulator makes trustd download and verify
+# Apple's PKI trust assets over the network, and until that finishes it answers no evaluation at
+# all. On a CI runner that can take minutes, long enough for every flow to time out waiting for
+# the sign-in form. Opening the form once, with a generous timeout, lets trustd finish before any
+# flow starts its clock.
+- launchApp:
+    clearState: true
+- runFlow: ensure-signed-out.yaml
+- tapOn: 'Sign in'
+- extendedWaitUntil:
+    visible:
+      id: 'thunderid-field-username'
+    timeout: 600000
+- stopApp

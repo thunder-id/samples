@@ -91,7 +91,7 @@ Create your `.env.local`:
 cp .env.example .env.local
 ```
 
-The other defaults match the import. In `.env.local`, set `THUNDERID_CLIENT_SECRET` and `WAYFINDER_BACKEND_CLIENT_SECRET` to the client secrets you set in `thunderid.env`, and `THUNDERID_SECRET` to a long random string; the SDK encrypts the session cookie with it. Generate one with:
+The other defaults match the import. In `.env.local`, set `THUNDERID_CLIENT_SECRET` and `WAYFINDER_BACKEND_CLIENT_SECRET` to the client secrets you set in `thunderid.env`, and `THUNDERID_SESSION_SECRET` to a random value of at least 32 bytes; the SDK encrypts the session cookie with it. Generate one with:
 
 ```bash
 openssl rand -base64 32
@@ -104,7 +104,7 @@ openssl rand -base64 32
 | `NEXT_PUBLIC_THUNDERID_APPLICATION_ID` | ID of the `Wayfinder Enterprise` application |
 | `NEXT_PUBLIC_THUNDERID_AFTER_SIGN_IN_URL`, `NEXT_PUBLIC_THUNDERID_AFTER_SIGN_OUT_URL` | Where ThunderID returns the browser after sign-in and sign-out |
 | `NEXT_PUBLIC_THUNDERID_SCOPES` | Scopes the app asks for: the organization and role claims, and the Wayfinder permissions |
-| `THUNDERID_SECRET` | Encrypts the session cookie |
+| `THUNDERID_SESSION_SECRET` | Encrypts the session cookie. At least 32 bytes, which production requires. |
 | `WAYFINDER_APP_URL` | Where the app runs. The admin components reach the backend routes under `/api/admin` from here. |
 | `WAYFINDER_API_RESOURCE` | The resource server whose permissions the app requests |
 | `WAYFINDER_SIGN_IN_FLOW_ID`, `WAYFINDER_ADMIN_ROLE_ID`, `WAYFINDER_MEMBER_ROLE_ID`, `WAYFINDER_ADMIN_ROLE_NAME`, `WAYFINDER_USER_TYPE` | Resources the import creates with fixed IDs |

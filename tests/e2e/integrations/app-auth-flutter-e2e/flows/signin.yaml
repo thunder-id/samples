@@ -1,0 +1,19 @@
+appId: com.example.flutterAppauthSample
+name: Sign in and sign out through the ThunderID Gate
+tags:
+  - auth
+env:
+  E2E_USERNAME: e2e_mobile_user
+  E2E_PASSWORD: TestPassword@123
+---
+- launchApp:
+    clearState: true
+- runFlow: subflows/ensure-signed-out.yaml
+
+- runFlow: subflows/sign-in.yaml
+
+# The app shows the ID token's claims and the token expiry once flutter_appauth has the tokens.
+- assertVisible: 'Access token expires.*'
+- assertVisible: 'Refresh tokens'
+
+- runFlow: subflows/sign-out.yaml

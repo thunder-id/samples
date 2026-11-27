@@ -1,0 +1,11 @@
+# ThunderID release downloaded by shared/scripts/thunderid.sh.
+.thunderid-server/
+
+# Playwright output
+playwright-report/
+test-results/
+blob-report/
+
+# Maestro output
+report.xml
+app.log

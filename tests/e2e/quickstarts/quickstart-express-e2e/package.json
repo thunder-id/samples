@@ -1,0 +1,14 @@
+{
+  "name": "@thunderid/quickstart-express-e2e",
+  "private": true,
+  "version": "0.0.0",
+  "description": "E2E suite of quickstarts/quickstart-express",
+  "type": "module",
+  "scripts": {
+    "test": "playwright test",
+    "report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.1"
+  }
+}

@@ -1,0 +1,149 @@
+appId: dev.thunderid.Quickstart
+name: Sign up a new user, then sign in as them
+tags:
+  - auth
+env:
+  E2E_PASSWORD: TestPassword@123
+---
+- launchApp:
+    clearState: true
+- runFlow: subflows/ensure-signed-out.yaml
+
+# Registration has to claim a username that does not exist yet, so each run generates its own.
+# This leaves a user behind on the target server per run, which is fine for a disposable CI
+# instance; against a long-lived dev server, expect the accounts to accumulate.
+- evalScript: ${output.username = 'e2e_signup_' + Date.now()}
+
+- tapOn: 'Get started'
+
+# The registration step is server-rendered like the sign-in step, but its flow definition uses
+# different action refs, so the submit button id differs from signin.yaml.
+- extendedWaitUntil:
+    visible:
+      id: 'thunderid-field-username'
+    timeout: 20000
+
+# "Visible" fires the instant the field is on screen, which on a loaded CI runner can be before
+# the view has actually finished settling (SwiftUI still completing its own layout/render pass
+# after the flow response arrives). Typing into a field that's mid-settle has been observed to
+# bind an empty string despite the keystrokes displaying correctly - the input lands, then gets
+# discarded when the view finishes settling under it. Waiting for animations to end first gives
+# that settling a beat to finish before anything gets typed.
+- waitForAnimationToEnd:
+    timeout: 3000
+
+# A slow CI runner can take long enough filling and submitting this form that the server's
+# credentials-step challenge expires before submission, which silently resets the form instead
+# of registering - the email step then never appears. That is an expired challenge, not a
+# regression, so retry the fill-and-submit rather than fail outright.
+#
+# The retried view is not guaranteed to come back blank - a failed submission can just as easily
+# leave the previous attempt's text sitting in the field - so each retry erases before typing
+# rather than assuming an empty field.
+- retry:
+    maxRetries: 2
+    commands:
+      - tapOn:
+          id: 'thunderid-field-username'
+      - eraseText: 50
+      - inputText: ${output.username}
+
+      # tapOn's own element-lookup timeout is much shorter than extendedWaitUntil's, and is not
+      # always enough on a loaded CI runner, so wait explicitly rather than tap blind.
+      - extendedWaitUntil:
+          visible:
+            id: 'thunderid-field-password'
+          timeout: 20000
+      - tapOn:
+          id: 'thunderid-field-password'
+      - eraseText: 50
+      - inputText: ${E2E_PASSWORD}
+
+      - tapOn:
+          id: 'thunderid-action-action_credentials'
+
+      - runFlow: subflows/dismiss-save-password.yaml
+
+      # Registration is multi-step: the credentials step is followed by a step collecting the
+      # attributes the user schema requires (email here). Each step is a fresh server-rendered
+      # view with its own action ref. CI runners render this step noticeably slower than a local
+      # Mac, so this uses the same 30s budget as the other post-submit waits below rather than
+      # 20s.
+      - extendedWaitUntil:
+          visible:
+            id: 'thunderid-field-email'
+          timeout: 30000
+
+# See the comment above the first waitForAnimationToEnd in this file - same settling race,
+# same fix, for the first (and only) field on this freshly-rendered step.
+- waitForAnimationToEnd:
+    timeout: 3000
+
+- tapOn:
+    id: 'thunderid-field-email'
+- inputText: ${output.username}@example.com
+
+- tapOn:
+    id: 'thunderid-action-action_schema_attrs'
+
+# Registration completes without issuing an assertion, so the user is created but NOT signed in
+# and the app falls back to the landing screen. Signing in with the credentials just registered
+# is what proves the account is actually usable.
+- extendedWaitUntil:
+    visible: 'Get started'
+    timeout: 30000
+
+- tapOn: 'Sign in'
+- extendedWaitUntil:
+    visible:
+      id: 'thunderid-field-username'
+    timeout: 20000
+
+# See the comment above the first waitForAnimationToEnd in this file - same settling race.
+- waitForAnimationToEnd:
+    timeout: 3000
+
+# A slow CI runner can take long enough filling and submitting this form that the server's
+# credentials-step challenge expires before submission, which silently resets the form instead
+# of authenticating - "Session active" then never appears. That is an expired challenge, not a
+# regression, so retry the fill-and-submit rather than fail outright.
+#
+# The retried view is not guaranteed to come back blank - a failed submission can just as easily
+# leave the previous attempt's text sitting in the field - so each retry erases before typing
+# rather than assuming an empty field.
+- retry:
+    maxRetries: 2
+    commands:
+      - tapOn:
+          id: 'thunderid-field-username'
+      - eraseText: 50
+      - inputText: ${output.username}
+
+      # tapOn's own element-lookup timeout is much shorter than extendedWaitUntil's, and is not
+      # always enough on a loaded CI runner, so wait explicitly rather than tap blind.
+      - extendedWaitUntil:
+          visible:
+            id: 'thunderid-field-password'
+          timeout: 20000
+      - tapOn:
+          id: 'thunderid-field-password'
+      - eraseText: 50
+      - inputText: ${E2E_PASSWORD}
+
+      - tapOn:
+          id: 'thunderid-action-action_001'
+
+      - runFlow: subflows/dismiss-save-password.yaml
+
+      - extendedWaitUntil:
+          visible: 'Session active'
+          timeout: 30000
+
+- scrollUntilVisible:
+    element: 'Sign out'
+    direction: DOWN
+    timeout: 20000
+- tapOn: 'Sign out'
+- extendedWaitUntil:
+    visible: 'Get started'
+    timeout: 20000

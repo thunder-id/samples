@@ -1,0 +1,23 @@
+appId: dev.thunderid.Quickstart
+name: Sign in and sign out
+tags:
+  - auth
+env:
+  E2E_USERNAME: e2e_mobile_user
+  E2E_PASSWORD: TestPassword@123
+---
+- launchApp:
+    clearState: true
+- runFlow: subflows/ensure-signed-out.yaml
+
+- runFlow: subflows/sign-in.yaml
+
+# ...and back out again, so the flow leaves the app as it found it.
+- scrollUntilVisible:
+    element: 'Sign out'
+    direction: DOWN
+    timeout: 20000
+- tapOn: 'Sign out'
+- extendedWaitUntil:
+    visible: 'Get started'
+    timeout: 20000

@@ -37,7 +37,9 @@ sequenceDiagram
 
 The app and the BFF share one origin. In development the Vite dev server forwards `/api/auth` to the BFF, so the session cookie is first party and no CORS setup is needed.
 
-The BFF is stateful. The cookie holds only a session ID, and the tokens stay in the BFF's session store, which is what lets a back-channel logout end a session.
+The BFF is stateful. The cookie holds only an opaque session ID, and the tokens stay in the BFF's session store, which is what lets a back-channel logout end a session.
+
+The server is a few lines: `thunderID()` sets up the SDK, and `thunderIDBff()` from `@thunderid/express` serves every endpoint below. See [`server/index.mjs`](server/index.mjs).
 
 ## Prerequisites
 
@@ -90,7 +92,7 @@ npm install
 npm run dev
 ```
 
-This starts the BFF on port 3001 and the React app on port 5173. Open [http://localhost:5173](http://localhost:5173) and sign in. The app never receives a refresh token or an ID token. The Token debug page shows the access token from `POST /api/auth/token`.
+This starts the BFF on port 3001 and the React app on port 5173. Open [http://localhost:5173](http://localhost:5173) and sign in. The app never receives a refresh token or an ID token. The Token debug page shows the access token from `POST /api/auth/token`, which the BFF serves only because the sample turns it on (see [Endpoints](#endpoints)).
 
 ## Use the BFF from a React app
 
@@ -108,23 +110,34 @@ Hooks and components work as they do without a BFF. Every SDK request carries `X
 
 ## Endpoints
 
-All under `/api/auth`. Every endpoint the browser SDK calls requires the `X-Requested-With: XMLHttpRequest` header, which a cross-site page cannot send without a CORS preflight, so the cookie cannot be used for cross-site request forgery.
+All under `/api/auth`, served by `thunderIDBff()`. Every response carries `Cache-Control: no-store`.
+
+Requests are checked before they reach an endpoint:
+
+- Every endpoint the browser SDK calls requires the `X-Requested-With: XMLHttpRequest` header, which a cross-site page cannot send without a CORS preflight. The exceptions are `GET /signin` and `GET /callback`, which the browser navigates to, `POST /backchannel-logout`, which ThunderID calls, and `GET /proxy/flow/meta`, the public sign-in UI metadata the SDK reads before sign-in.
+- The same endpoints refuse a request whose `Sec-Fetch-Site` header says it came from another origin or site.
+- A state-changing request, any method other than `GET`, `HEAD`, or `OPTIONS`, is refused when its `Origin` is not in the allowed origins. They default to the origin of `afterSignInUrl`, which is `APP_URL`. In development the Vite dev server forwards `/api/auth` without changing `Origin`, so the browser's `http://localhost:5173` matches. Pass `allowedOrigins` to `thunderIDBff()` to allow others.
 
 | Endpoint | What it does |
 |---|---|
-| `GET /signin` | Starts sign-in and comes back to the app path in `returnTo` |
+| `GET /signin` | Starts sign-in and comes back to the app path in `returnTo`. `ouId` signs in to an organization unit |
 | `GET /callback` | The OAuth redirect URI. Exchanges the code and sets the session cookie |
-| `GET /session` | `{isSignedIn, user, expiresAt, scope}`. Refreshes an expired access token first |
+| `GET /session` | `{isSignedIn, user, expiresAt, scope}`, where `user` is the ID token's claims without the protocol claims. Refreshes an expired access token first |
 | `GET /checksession` | `{isSignedIn}` only. Never refreshes, so the app can poll it |
-| `POST /refresh` | Refreshes the access token with the refresh token held here |
+| `POST /refresh` | Refreshes the access token with the refresh token held here. `204`, or `401 login_required` |
 | `POST /signout` | Ends the BFF session and returns `{redirectUrl}`, the ThunderID end-session URL |
-| `POST /token` | The access token, without the refresh token, for APIs the app calls directly |
-| `ALL /proxy/*` | Forwards to `API_BASE_URL` with `Authorization: Bearer`. `401 login_required` when the session is gone |
+| `POST /switch` | Switches the session to the organization unit in `ouId` without a redirect, using the device secret. `interaction_required` when that is not possible |
 | `POST /backchannel-logout` | Receives ThunderID's logout token and deletes the session it names |
+| `ALL /proxy/*` | Forwards to `API_BASE_URL` with `Authorization: Bearer`. `401 login_required` when the session is gone, `400 invalid_path` for a path outside the API, `502 bad_gateway` when the API cannot be reached |
+| `POST /token` | Off by default. The access token, without the refresh token, for APIs the app calls directly (`endpoints.backend.bypass`) |
+
+Any other path answers `404 not_found`, and a failure inside the BFF `500 server_error`.
+
+`POST /token` is the token-mediating pattern: the browser holds an access token, which a script injected into the page could read. This sample turns it on with `thunderIDBff({exposeAccessToken: true})` for its Token debug page. It is optional. Leave the option out, and call APIs through `/api/auth/proxy`, to keep every token on the server.
 
 ## Back-channel logout
 
-When the user's ThunderID session ends anywhere else, ThunderID posts a signed logout token to `/api/auth/backchannel-logout`. The SDK's `handleBackchannelLogout()` checks the signature, issuer, audience, and replay, then deletes the BFF session that joined the ended ThunderID session. The React app finds out the next time it asks `/api/auth/checksession`, or on its next API call, and signs the user out.
+When the user's ThunderID session ends anywhere else, ThunderID posts a signed logout token to `/api/auth/backchannel-logout`. The SDK checks the signature, issuer, audience, and replay, then deletes the BFF session that joined the ended ThunderID session. The React app finds out the next time it asks `/api/auth/checksession`, or on its next API call, and signs the user out.
 
 To try it:
 
@@ -143,7 +156,8 @@ To try it:
 
 ## Going to production
 
-- Serve the React build and the BFF from the same origin, for example behind one reverse proxy, and set `APP_URL` to it. With `https`, the session cookie is marked `Secure`.
+- Serve the React build and the BFF from the same origin, over HTTPS, for example behind one reverse proxy, and set `APP_URL` to it.
+- Run the BFF with `NODE_ENV=production`. The session cookie is then `Secure` and named with the `__Host-` prefix, so browsers send it only over HTTPS. Over plain HTTP, sign-in never sticks.
 - Remove `NODE_TLS_REJECT_UNAUTHORIZED=0`.
 - The SDK keeps sessions in memory, so restarting the BFF signs everyone out. With more than one BFF instance, give the SDK a shared store, since ThunderID's back-channel request reaches only one of them.
 

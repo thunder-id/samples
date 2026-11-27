@@ -1,0 +1,67 @@
+appId: dev.thunderid.Quickstart
+name: Sign in and sign out
+tags:
+  - auth
+env:
+  E2E_USERNAME: e2e_mobile_user
+  E2E_PASSWORD: TestPassword@123
+---
+- launchApp:
+    clearState: true
+- runFlow: subflows/ensure-signed-out.yaml
+
+- tapOn: 'Sign in'
+
+# The credentials step is rendered from the flow definition the server returns, not from static
+# native views. The SDK tags each input with the field's identifier and each button with the
+# action's ref, so these ids track the server's flow response.
+#
+# Compose keeps testTag inside its own semantics tree, so these ids are only visible to Maestro
+# because the SDK opts the subtree in via testTagsAsResourceId.
+- extendedWaitUntil:
+    visible:
+      id: 'thunderid-field-username'
+    timeout: 25000
+
+- tapOn:
+    id: 'thunderid-field-username'
+- inputText: ${E2E_USERNAME}
+
+- tapOn:
+    id: 'thunderid-field-password'
+- inputText: ${E2E_PASSWORD}
+
+- tapOn:
+    id: 'thunderid-action-action_001'
+
+# Authenticated state.
+- extendedWaitUntil:
+    visible: 'Session active'
+    timeout: 30000
+
+# ...and back out again, so the flow leaves the app as it found it.
+#
+# The scroll-then-tap is wrapped in a retry: a debug screenshot from a failed tapOn on the
+# equivalent step in signup.yaml showed the list back at the very top, scrolled up again after
+# scrollUntilVisible had already found "Sign out" - the home screen's own recomposition (it has a
+# live "expires in" countdown) reset the scroll position in the gap before the tap landed.
+# Retrying re-does the scroll from wherever the list actually is.
+- retry:
+    maxRetries: 2
+    commands:
+      - scrollUntilVisible:
+          element: 'Sign out'
+          direction: DOWN
+          timeout: 20000
+
+      # "Token debug" sits immediately above "Sign out" in the action list. Tapping right as the
+      # scroll lands has, at least once, hit "Token debug" instead of "Sign out" - the scroll's
+      # own settle animation was still resolving when the tap coordinate was computed. Let it
+      # finish first.
+      - waitForAnimationToEnd:
+          timeout: 3000
+      - tapOn: 'Sign out'
+
+- extendedWaitUntil:
+    visible: 'Get started'
+    timeout: 20000
