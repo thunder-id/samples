@@ -48,6 +48,7 @@ cd my-app
 2. Sign in to the ThunderID Console. With the quickstart image it is the Control Plane console, `https://localhost:8095/console`.
 3. Choose **Import / Export**, then **Import**. Upload `thunderid-config/thunderid-config.yaml` as the configuration file and `thunderid-config/thunderid.env` as the environment variables file.
 4. Choose **Continue**, then **Import configuration**.
+5. Share the System resource server with the companies, so the backend gets a token for the company it acts for. Clear the project selection, choose **Resource servers**, open **System**, and select the **Organization Access** tab. Choose **Default and chosen organization units**, keep **All child organization units**, and choose **Save**.
 
 The import sets a server config, which only the Control Plane writes, so import there. Imported straight into a Data Plane, it is refused.
 
