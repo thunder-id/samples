@@ -1,0 +1,21 @@
+appId: com.example.flutterAppauthSample
+name: Refresh the tokens with the refresh token
+tags:
+  - auth
+env:
+  E2E_USERNAME: e2e_mobile_user
+  E2E_PASSWORD: TestPassword@123
+---
+- launchApp:
+    clearState: true
+- runFlow: subflows/ensure-signed-out.yaml
+- runFlow: subflows/sign-in.yaml
+
+# A refresh replaces the tokens without the browser and keeps the session.
+- tapOn: 'Refresh tokens'
+- extendedWaitUntil:
+    visible: 'Signed in as.*'
+    timeout: 20000
+- assertNotVisible: '.*[Ee]rror.*'
+
+- runFlow: subflows/sign-out.yaml

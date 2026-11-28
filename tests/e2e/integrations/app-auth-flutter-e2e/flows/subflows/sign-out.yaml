@@ -1,0 +1,15 @@
+appId: com.example.flutterAppauthSample
+---
+# Ends the session at ThunderID (RP-initiated logout through the system browser) and waits for the
+# app's signed-out screen. The Gate may ask to confirm the sign-out.
+- tapOn: 'Sign out'
+- runFlow: continue-system-prompt.yaml
+- runFlow:
+    when:
+      visible: 'Sign out'
+      notVisible: 'Signed in as.*'
+    commands:
+      - tapOn: 'Sign out'
+- extendedWaitUntil:
+    visible: 'Sign in'
+    timeout: 30000

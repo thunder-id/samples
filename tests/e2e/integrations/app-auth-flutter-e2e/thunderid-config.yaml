@@ -1,0 +1,50 @@
+# Copyright 2026 The ThunderID Authors
+# SPDX-License-Identifier: Apache-2.0
+#
+# OAuth2 client of the integrations/app-auth-flutter E2E suite: a public native client with PKCE,
+# redirecting to the sample's custom scheme. Imported by run-e2e.sh with `thunderid.sh import`.
+---
+resource_type: application
+id: 019a0000-0000-7000-8000-0000000000d1
+ouHandle: default
+name: E2E integrations/app-auth-flutter
+description: OAuth2 client for the app-auth-flutter sample's E2E suite
+type: mobile
+authFlowHandle: default-flow
+isRegistrationFlowEnabled: false
+isRecoveryFlowEnabled: false
+isSignOutFlowEnabled: false
+assertion:
+  validityPeriod: 3600
+loginConsent:
+  validityPeriod: 0
+allowedUserTypes:
+  - Person
+inboundAuthConfig:
+  - type: oauth2
+    config:
+      clientId: SAMPLES_E2E_APP_AUTH_FLUTTER
+      redirectUris:
+        - com.example.appauth://callback
+      postLogoutRedirectUris:
+        - com.example.appauth://logout
+      grantTypes:
+        - authorization_code
+        - refresh_token
+      responseTypes:
+        - code
+      tokenEndpointAuthMethod: none
+      pkceRequired: true
+      publicClient: true
+      token:
+        accessToken:
+          userConfig:
+            validityPeriod: 3600
+            attributes: [given_name, family_name, email]
+        idToken:
+          validityPeriod: 3600
+          userAttributes: [given_name, family_name, email, name]
+          responseType: JWT
+      userInfo:
+        responseType: JSON
+        userAttributes: [given_name, family_name, email]

@@ -1,0 +1,135 @@
+appId: dev.thunderid.Quickstart
+name: Sign in and sign out
+tags:
+  - auth
+env:
+  E2E_USERNAME: e2e_mobile_user
+  E2E_PASSWORD: TestPassword@123
+---
+- launchApp:
+    clearState: true
+- runFlow: subflows/ensure-signed-out.yaml
+
+# The credentials step is rendered from the flow definition the server returns, not from static
+# native views. The SDK tags each input with the field's identifier and each button with the
+# action's ref, so these ids track the server's flow response.
+#
+# Entering a flow makes the first `POST /flow/execute` call, and a connection dropped there
+# (NSURLErrorDomain -1005) leaves the app on an error sheet with the step never rendered. That
+# is a transport failure rather than a product one, and a real user would simply try again, so
+# retry the entry. A step that genuinely never renders still fails, after the retries.
+- retry:
+    maxRetries: 2
+    commands:
+      # A second attempt means the previous one left the app on the error sheet, which carries
+      # no control to dismiss it and no way back to the landing screen. Restart before trying
+      # again. On the first attempt "Sign in" is already on screen and this does nothing.
+      - runFlow:
+          when:
+            notVisible: 'Sign in'
+          commands:
+            - launchApp:
+                clearState: true
+            - runFlow: subflows/ensure-signed-out.yaml
+      - tapOn: 'Sign in'
+      - extendedWaitUntil:
+          visible:
+            id: 'thunderid-field-username'
+          timeout: 25000
+
+# "Visible" fires the instant the field is on screen, which on a loaded CI runner can be before
+# the widget has actually finished settling (Flutter still completing its own build and layout
+# pass after the flow response arrives). Typing into a field that's mid-settle has been observed
+# to bind an empty string despite the keystrokes displaying correctly - the input lands, then
+# gets discarded when the widget finishes settling under it. Waiting for animations to end first
+# gives that settling a beat to finish before anything gets typed.
+- waitForAnimationToEnd:
+    timeout: 3000
+
+# A slow CI runner can take long enough filling and submitting this form that the server's
+# credentials-step challenge expires before submission, which silently resets the form instead
+# of authenticating - "Session active" then never appears. That is an expired challenge, not a
+# regression, so retry the fill-and-submit rather than fail outright.
+#
+# The retried view is not guaranteed to come back blank - a failed submission can just as easily
+# leave the previous attempt's text sitting in the field - so each retry erases before typing
+# rather than assuming an empty field.
+- retry:
+    maxRetries: 2
+    commands:
+      # A retry that follows a dropped connection has no form left to type into, only the error
+      # sheet, and that sheet carries no control to dismiss it. Restart and re-enter the flow
+      # first. On the first attempt, and on an expired-challenge retry, the form is still there
+      # and this does nothing.
+      - runFlow:
+          when:
+            notVisible:
+              id: 'thunderid-field-username'
+          commands:
+            - launchApp:
+                clearState: true
+            - runFlow: subflows/ensure-signed-out.yaml
+            - tapOn: 'Sign in'
+            - extendedWaitUntil:
+                visible:
+                  id: 'thunderid-field-username'
+                timeout: 25000
+            - waitForAnimationToEnd:
+                timeout: 3000
+
+      - tapOn:
+          id: 'thunderid-field-username'
+      - eraseText: 50
+      - inputText: ${E2E_USERNAME}
+
+      # tapOn's own element-lookup timeout is much shorter than extendedWaitUntil's, and is not
+      # always enough on a loaded CI runner, so wait explicitly rather than tap blind.
+      - extendedWaitUntil:
+          visible:
+            id: 'thunderid-field-password'
+          timeout: 20000
+      - tapOn:
+          id: 'thunderid-field-password'
+      - eraseText: 50
+      - inputText: ${E2E_PASSWORD}
+
+      - tapOn:
+          id: 'thunderid-action-action_001'
+
+      - runFlow: subflows/dismiss-save-password.yaml
+
+      # What the retry is testing for is whether the submission was accepted at all, not whether
+      # the app reached the authenticated state. An expired challenge leaves the credentials step
+      # sitting on screen, and that is the case worth retrying. Waiting for the step to go away
+      # detects it without swallowing a later failure.
+      - extendedWaitUntil:
+          notVisible:
+            id: 'thunderid-field-username'
+          timeout: 20000
+
+      # The credentials step going away is necessary but not sufficient: a dropped connection
+      # replaces it with an error sheet, which satisfies the check above just as well as a
+      # successful submission does. Without this the retry treats the failure as a pass, exits,
+      # and the authenticated-state assertion below fails with no attempt left to save it.
+      #
+      # The pattern matches the element's whole text, so it needs the `.*` either side: the
+      # banner reads "[NETWORK_ERROR] Network request failed: ...", not "NETWORK_ERROR".
+      - assertNotVisible: '.*NETWORK_ERROR.*'
+
+# Authenticated state, asserted outside the retry on purpose. A submission the server accepted
+# that never reaches the authenticated state is a real failure, and it has to report as one.
+# Inside the retry it would instead re-enter the block, fail to find a form that is no longer on
+# screen, and surface as "element not found", which points at the wrong thing entirely.
+- extendedWaitUntil:
+    visible: 'Session active'
+    timeout: 60000
+
+# ...and back out again, so the flow leaves the app as it found it.
+- scrollUntilVisible:
+    element: 'Sign out'
+    direction: DOWN
+    timeout: 20000
+- tapOn: 'Sign out'
+- extendedWaitUntil:
+    visible: 'Get started'
+    timeout: 20000

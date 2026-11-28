@@ -9,7 +9,7 @@
     "dev": "node --env-file-if-exists=.env --watch index.mjs"
   },
   "dependencies": {
-    "@thunderid/express": "1.3.0",
+    "@thunderid/express": "latest",
     "cookie-parser": "^1.4.7",
     "express": "^4.21.2"
   },

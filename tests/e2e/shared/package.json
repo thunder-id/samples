@@ -1,0 +1,12 @@
+{
+  "name": "@thunderid/samples-e2e-shared",
+  "private": true,
+  "version": "0.0.0",
+  "description": "What every sample app's E2E suite shares: the ThunderID server scripts, provisioning, and Playwright helpers",
+  "type": "module",
+  "dependencies": {
+    "@playwright/test": "1.64.1",
+    "dotenv": "17.2.3",
+    "undici": "7.30.1"
+  }
+}

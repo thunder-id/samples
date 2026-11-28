@@ -1,0 +1,125 @@
+name: 🎭 E2E
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: "lts/*"
+
+jobs:
+  discover:
+    name: 🔍 Discover E2E Suites
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      suites: ${{ steps.find.outputs.suites }}
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          fetch-depth: 0
+
+      # Every tests/e2e/<area>/<sample>-e2e/ folder with a playwright.config.ts is a web suite for
+      # <area>/<sample>. On a pull request, a suite runs only when its sample, the suite itself,
+      # or what every suite shares changed. A manual run takes every suite.
+      - name: 🔍 Find Changed Suites
+        id: find
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          EVENT: ${{ github.event_name }}
+        run: |
+          if [ "$EVENT" = "pull_request" ]; then
+            changed=$(git diff --name-only "$BASE_SHA"...HEAD)
+          else
+            changed=""
+          fi
+          shared_changed=false
+          if [ "$EVENT" != "pull_request" ] || grep -qE '^(tests/e2e/(shared/|package(-lock)?\.json$|tsconfig\.json$)|\.github/workflows/e2e\.yml$)' <<<"$changed"; then
+            shared_changed=true
+          fi
+
+          suites=()
+          for config in tests/e2e/*/*-e2e/playwright.config.ts; do
+            suite=$(dirname "$config")
+            # A suite whose sample needs more than the latest ThunderID release offers carries a
+            # ci-skip file that says why. It still runs locally against a server that supports it.
+            if [ -f "$suite/ci-skip" ]; then
+              echo "Skipping ${suite#tests/e2e/}: $(head -n 1 "$suite/ci-skip")"
+              continue
+            fi
+            sample=${suite#tests/e2e/}
+            sample=${sample%-e2e}
+            if $shared_changed || grep -qE "^(${sample}|${suite})/" <<<"$changed"; then
+              suites+=("${suite#tests/e2e/}")
+            fi
+          done
+
+          json=$(printf '%s\n' ${suites[@]+"${suites[@]}"} | jq -R 'select(length > 0)' | jq -cs .)
+          echo "suites=$json" >> "$GITHUB_OUTPUT"
+          echo "E2E suites to run: $json"
+
+  e2e:
+    name: 🎭 E2E (${{ matrix.suite }})
+    needs: discover
+    if: ${{ needs.discover.outputs.suites != '[]' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: ${{ fromJson(needs.discover.outputs.suites) }}
+    defaults:
+      run:
+        working-directory: tests/e2e
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: ⚙️ Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: tests/e2e/package-lock.json
+
+      # Downloads the latest ThunderID release, runs its setup and starts it, the same way locally
+      # and in CI. The token only lifts the GitHub API rate limit for the latest-release lookup.
+      - name: 🚀 Start ThunderID (Latest Release)
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: ./shared/scripts/thunderid.sh start
+
+      - name: 📦 Install Dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: 📦 Install Playwright Browsers
+        run: npx playwright install --with-deps chromium
+
+      # The suite's global setup imports what the sample needs and creates the test users, and
+      # Playwright starts the sample itself, installing it from its own lockfile.
+      - name: 🎭 Run E2E Suite
+        run: npm test -w "${{ matrix.suite }}"
+
+      - name: 📤 Upload Playwright Report
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: playwright-report-${{ strategy.job-index }}
+          path: |
+            tests/e2e/${{ matrix.suite }}/playwright-report/
+            tests/e2e/${{ matrix.suite }}/test-results/
+            tests/e2e/.thunderid-server/server.log
+          retention-days: 14
+
+      - name: 🛑 Stop ThunderID
+        if: ${{ always() }}
+        run: ./shared/scripts/thunderid.sh stop || true

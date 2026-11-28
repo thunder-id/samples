@@ -1,0 +1,249 @@
+appId: dev.thunderid.Quickstart
+name: Sign up a new user, then sign in as them
+tags:
+  - auth
+env:
+  E2E_PASSWORD: TestPassword@123
+---
+- launchApp:
+    clearState: true
+- runFlow: subflows/ensure-signed-out.yaml
+
+# Registration has to claim a username that does not exist yet, so each run generates its own.
+# This leaves a user behind on the target server per run, which is fine for a disposable CI
+# instance; against a long-lived dev server, expect the accounts to accumulate.
+- evalScript: ${output.username = 'e2e_signup_' + Date.now()}
+
+# The registration step is server-rendered like the sign-in step, but its flow definition uses
+# different action refs, so the submit button id differs from signin.yaml.
+#
+# Entering a flow makes the first `POST /flow/execute` call, and a connection dropped there
+# (NSURLErrorDomain -1005) leaves the app on an error sheet with the step never rendered. That
+# is a transport failure rather than a product one, and a real user would simply try again, so
+# retry the entry. A step that genuinely never renders still fails, after the retries.
+- retry:
+    maxRetries: 2
+    commands:
+      # A second attempt means the previous one left the app on the error sheet, which carries
+      # no control to dismiss it and no way back to the landing screen. Restart before trying
+      # again. On the first attempt "Get started" is already on screen and this does nothing.
+      - runFlow:
+          when:
+            notVisible: 'Get started'
+          commands:
+            - launchApp:
+                clearState: true
+            - runFlow: subflows/ensure-signed-out.yaml
+      - tapOn: 'Get started'
+      - extendedWaitUntil:
+          visible:
+            id: 'thunderid-field-username'
+          timeout: 25000
+
+# "Visible" fires the instant the field is on screen, which on a loaded CI runner can be before
+# the widget has actually finished settling (Flutter still completing its own build and layout
+# pass after the flow response arrives). Typing into a field that's mid-settle has been observed
+# to bind an empty string despite the keystrokes displaying correctly - the input lands, then
+# gets discarded when the widget finishes settling under it. Waiting for animations to end first
+# gives that settling a beat to finish before anything gets typed.
+- waitForAnimationToEnd:
+    timeout: 3000
+
+# A slow CI runner can take long enough filling and submitting this form that the server's
+# credentials-step challenge expires before submission, which silently resets the form instead
+# of registering - the email step then never appears. That is an expired challenge, not a
+# regression, so retry the fill-and-submit rather than fail outright.
+#
+# The retried view is not guaranteed to come back blank - a failed submission can just as easily
+# leave the previous attempt's text sitting in the field - so each retry erases before typing
+# rather than assuming an empty field.
+- retry:
+    maxRetries: 2
+    commands:
+      # A dropped connection strands the app on an error sheet with no control to dismiss it,
+      # so a retry has to restart rather than poke at a screen that is already gone. The form
+      # still being there is what says the attempt is recoverable in place, so key off that:
+      # on the first attempt, and on an expired-challenge retry, this does nothing.
+      - runFlow:
+          when:
+            notVisible:
+              id: 'thunderid-field-username'
+          commands:
+            - launchApp:
+                clearState: true
+            - runFlow: subflows/ensure-signed-out.yaml
+      # A restarted attempt is back on the landing screen rather than the form, so re-enter the
+      # flow. When the previous attempt got as far as the form this is already satisfied.
+      - runFlow:
+          when:
+            visible: 'Get started'
+          commands:
+            # Each attempt claims its own name: a connection dropped mid-submission can leave
+            # the registration applied server-side, and reusing the name would then fail as
+            # already taken rather than retrying cleanly.
+            - evalScript: ${output.username = 'e2e_signup_' + Date.now()}
+            - tapOn: 'Get started'
+            - extendedWaitUntil:
+                visible:
+                  id: 'thunderid-field-username'
+                timeout: 25000
+            - waitForAnimationToEnd:
+                timeout: 3000
+
+      - tapOn:
+          id: 'thunderid-field-username'
+      - eraseText: 50
+      - inputText: ${output.username}
+
+      # tapOn's own element-lookup timeout is much shorter than extendedWaitUntil's, and is not
+      # always enough on a loaded CI runner, so wait explicitly rather than tap blind.
+      - extendedWaitUntil:
+          visible:
+            id: 'thunderid-field-password'
+          timeout: 20000
+      - tapOn:
+          id: 'thunderid-field-password'
+      - eraseText: 50
+      - inputText: ${E2E_PASSWORD}
+
+      - tapOn:
+          id: 'thunderid-action-action_credentials'
+
+      - runFlow: subflows/dismiss-save-password.yaml
+
+      # Registration is multi-step: the credentials step is followed by a step collecting the
+      # attributes the user schema requires (email here). Each step is a fresh server-rendered
+      # view with its own action ref. CI runners render this step noticeably slower than a local
+      # machine, so this uses the same 30s budget as the other post-submit waits below rather
+      # than 20s.
+      - extendedWaitUntil:
+          visible:
+            id: 'thunderid-field-email'
+          timeout: 60000
+
+      # See the comment above the first waitForAnimationToEnd in this file - same settling race,
+      # same fix, for the first (and only) field on this freshly-rendered step.
+      - waitForAnimationToEnd:
+          timeout: 3000
+
+      - tapOn:
+          id: 'thunderid-field-email'
+      - inputText: ${output.username}@example.com
+
+      - tapOn:
+          id: 'thunderid-action-action_schema_attrs'
+
+      # Registration completes without issuing an assertion, so the user is created but NOT
+      # signed in and the app falls back to the landing screen. Signing in with the credentials
+      # just registered is what proves the account is actually usable.
+      #
+      # This submission is exposed to the same dropped connection (NSURLErrorDomain -1005) as
+      # the entry, and it strands the app on the same error sheet, so it sits inside this retry:
+      # a failed attempt restarts and registers again under a new name.
+      - extendedWaitUntil:
+          visible: 'Get started'
+          timeout: 60000
+
+# Same transport exposure as the registration entry above.
+- retry:
+    maxRetries: 2
+    commands:
+      # A second attempt means the previous one left the app on the error sheet, which carries
+      # no control to dismiss it and no way back to the landing screen. Restart before trying
+      # again. On the first attempt "Sign in" is already on screen and this does nothing.
+      - runFlow:
+          when:
+            notVisible: 'Sign in'
+          commands:
+            - launchApp:
+                clearState: true
+            - runFlow: subflows/ensure-signed-out.yaml
+      - tapOn: 'Sign in'
+      - extendedWaitUntil:
+          visible:
+            id: 'thunderid-field-username'
+          timeout: 25000
+
+# See the comment above the first waitForAnimationToEnd in this file - same settling race.
+- waitForAnimationToEnd:
+    timeout: 3000
+
+# A slow CI runner can take long enough filling and submitting this form that the server's
+# credentials-step challenge expires before submission, which silently resets the form instead
+# of authenticating - "Session active" then never appears. That is an expired challenge, not a
+# regression, so retry the fill-and-submit rather than fail outright.
+#
+# The retried view is not guaranteed to come back blank - a failed submission can just as easily
+# leave the previous attempt's text sitting in the field - so each retry erases before typing
+# rather than assuming an empty field.
+- retry:
+    maxRetries: 2
+    commands:
+      # A retry that follows a dropped connection has no form left to type into, only the error
+      # sheet. Restart and re-enter sign-in first. The account already exists by this point, so
+      # this reuses the same username rather than claiming a new one.
+      - runFlow:
+          when:
+            notVisible:
+              id: 'thunderid-field-username'
+          commands:
+            - launchApp:
+                clearState: true
+            - runFlow: subflows/ensure-signed-out.yaml
+            - tapOn: 'Sign in'
+            - extendedWaitUntil:
+                visible:
+                  id: 'thunderid-field-username'
+                timeout: 25000
+            - waitForAnimationToEnd:
+                timeout: 3000
+
+      - tapOn:
+          id: 'thunderid-field-username'
+      - eraseText: 50
+      - inputText: ${output.username}
+
+      # tapOn's own element-lookup timeout is much shorter than extendedWaitUntil's, and is not
+      # always enough on a loaded CI runner, so wait explicitly rather than tap blind.
+      - extendedWaitUntil:
+          visible:
+            id: 'thunderid-field-password'
+          timeout: 20000
+      - tapOn:
+          id: 'thunderid-field-password'
+      - eraseText: 50
+      - inputText: ${E2E_PASSWORD}
+
+      - tapOn:
+          id: 'thunderid-action-action_001'
+
+      - runFlow: subflows/dismiss-save-password.yaml
+
+      # See signin.yaml: the retry tests whether the submission was accepted, which is the
+      # credentials step going away. The authenticated state is asserted outside the retry.
+      - extendedWaitUntil:
+          notVisible:
+            id: 'thunderid-field-username'
+          timeout: 20000
+
+      # The credentials step going away is necessary but not sufficient: a dropped connection
+      # replaces it with an error sheet, which satisfies the check above just as well as a
+      # successful submission does. Without this the retry treats the failure as a pass, exits,
+      # and the authenticated-state assertion below fails with no attempt left to save it.
+      #
+      # The pattern matches the element's whole text, so it needs the `.*` either side: the
+      # banner reads "[NETWORK_ERROR] Network request failed: ...", not "NETWORK_ERROR".
+      - assertNotVisible: '.*NETWORK_ERROR.*'
+
+- extendedWaitUntil:
+    visible: 'Session active'
+    timeout: 60000
+
+- scrollUntilVisible:
+    element: 'Sign out'
+    direction: DOWN
+    timeout: 20000
+- tapOn: 'Sign out'
+- extendedWaitUntil:
+    visible: 'Get started'
+    timeout: 20000

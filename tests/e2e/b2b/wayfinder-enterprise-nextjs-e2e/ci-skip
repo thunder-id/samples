@@ -1,0 +1,1 @@
+Needs a ThunderID server built from main: the latest release rejects this sample's configuration (organization unit permissions and flows). Remove this file once a release supports it.

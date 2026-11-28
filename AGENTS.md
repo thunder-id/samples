@@ -42,7 +42,8 @@ on a pull request.
 
 - Put it under the area it belongs to and give it a `README.md` that follows the structure
   below. Follow the sample-banner skill to render its banner.
-- Depend on the published SDK release, never a workspace or local path.
+- Depend on the latest published SDK release, never a workspace or local path. See
+  [SDK versions](#sdk-versions).
 - Add a row to its area's table under `## Samples` in the root `README.md`, in alphabetical
   order. A new area gets its own `### <Area>` heading, a one-line description, and a
   table, in the same order as the Layout table above, and a row in that Layout table.
@@ -91,6 +92,29 @@ for a mobile app) and adapt it rather than starting from scratch.
 
 Write in plain, direct sentences. Link only to pages that exist; check thunderid.dev links
 before adding them.
+
+## SDK versions
+
+Every sample uses the latest release of its ThunderID SDK, so a developer who copies one gets
+the current SDK and the code that goes with it.
+
+- **npm:** depend on each `@thunderid/*` package, including `@thunderid/eslint-plugin` and
+  `@thunderid/prettier-config`, as `"latest"`, never an exact or ranged version. The committed
+  `package-lock.json` records the release it resolved.
+- **Swift Package Manager:** `.package(url: "https://github.com/thunder-id/ios-sdks", from: "<latest release>")`.
+- **pub:** `thunderid_flutter: ^<latest release>`.
+- **Gradle:** JitPack has no `latest` alias, so use the latest release tag:
+  `com.github.thunder-id:android-sdks:v<latest release>`.
+
+After an SDK release, move every sample that uses it to that release in one pull request. npm
+keeps a locked version that already satisfies `"latest"`, so `npm install` alone does not move
+it. In each sample, run `npm install <package>@latest` for each `@thunderid/*` package, set the
+dependency back to `"latest"`, and run `npm install` again, then run the sample's format check,
+lint and build.
+
+Samples carry no compatibility with older SDK releases: no fallback settings, aliased
+environment variables, or notes for earlier versions. When a release changes what a sample
+needs, change the sample.
 
 ## Package manager
 

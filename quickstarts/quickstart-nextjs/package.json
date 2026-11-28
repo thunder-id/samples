@@ -10,7 +10,7 @@
     "start": "next start"
   },
   "dependencies": {
-    "@thunderid/nextjs": "1.3.0",
+    "@thunderid/nextjs": "latest",
     "next": "^15.5.29",
     "react": "^19.2.9",
     "react-dom": "^19.2.9"
